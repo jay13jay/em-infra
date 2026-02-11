@@ -1,0 +1,34 @@
+.DS_Store
+node_modules/
+.env
+.vscode/
+.idea/
+*.log
+.buildcache/
+.terraform/
+.terraform.lock.hcl
+**/dist/
+**/build/
+**/*.pyc
+*.pickle
+/coverage/
+*.tgz
+
+# Terraform sensitive / local
+*.tfvars
+*.tfvars.json
+*.tfstate
+*.tfstate.*
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+# SSH / keys
+*.pem
+*.key
+id_rsa
+id_rsa.pub
+

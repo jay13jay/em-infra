@@ -1,0 +1,24 @@
+# Proxmox provider credentials (prefer setting via env vars)
+proxmox_api_url = "https://proxmox.example:8006/api2/json"
+# proxmox_api_token_id = "token@pve!terraform"
+# proxmox_api_token_secret = "REDACTED"
+
+env_name = "k3s-dev"
+node = "pve"
+
+# Control plane template (cloud-init + qemu-guest-agent)
+control_plane_template = "ubuntu-22-cloudinit-template"
+
+# Create 0 non-GPU workers by default; set to 1..N to add ordinary workers
+worker_count = 0
+worker_template = "ubuntu-22-cloudinit-template"
+
+# GPU workers: one per PCI BDF. Add or remove entries to scale GPU workers.
+gpu_worker_pci_bdfs = ["0000:03:00.0"]
+gpu_worker_template = "ubuntu-22-cloudinit-template"
+
+# SSH keys to inject into all VMs
+ssh_authorized_keys = ["ssh-rsa AAAA... user@example.com"]
+
+disk_pool = "local-lvm"
+network_bridge = "vmbr0"
