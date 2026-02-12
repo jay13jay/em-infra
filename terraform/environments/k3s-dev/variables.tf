@@ -106,8 +106,33 @@ variable "gpu_worker_disk_gb" {
 }
 
 variable "ssh_authorized_keys" {
-  type    = list(string)
-  default = []
+  type        = list(string)
+  default     = []
+  description = "List of SSH public keys to inject into all VMs. Operator must ensure matching private key is available."
+}
+
+variable "ssh_public_key_comment" {
+  type        = string
+  default     = ""
+  description = "Optional comment to document which private key matches ssh_authorized_keys (e.g., 'Matches ~/.ssh/id_rsa')"
+}
+
+variable "cluster_cidr" {
+  type        = string
+  default     = "10.42.0.0/16"
+  description = "Kubernetes pod network CIDR (k3s default: 10.42.0.0/16). Used for validation and documentation."
+}
+
+variable "service_cidr" {
+  type        = string
+  default     = "10.43.0.0/16"
+  description = "Kubernetes service network CIDR (k3s default: 10.43.0.0/16). Used for validation and documentation."
+}
+
+variable "cluster_network_cidr" {
+  type        = string
+  default     = ""
+  description = "Optional: canonical cluster node network CIDR (e.g., '192.168.1.0/24'). Used for static IP validation. Leave empty if using DHCP."
 }
 
 variable "disk_pool" {

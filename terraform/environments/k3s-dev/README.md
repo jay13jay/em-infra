@@ -1,5 +1,7 @@
 # k3s-dev environment
 
+**Architecture:** See [docs/architecture-freeze.md](../../../docs/architecture-freeze.md) for the locked Phase 0 contract.
+
 Purpose: provision VMs for a non-HA k3s development cluster. This environment creates:
 
 - 1 control-plane VM (no k3s installation)
@@ -10,6 +12,7 @@ Important notes:
 - This environment only provisions VMs. It does not install k3s or perform any in-guest provisioning beyond SSH key injection and optional `ipconfig0`.
 - GPU workers are created one-per-PCI BDF. To scale GPU workers add/remove entries in `gpu_worker_pci_bdfs`.
 - The `gpu_worker` module expects the GPU to be bound on the host (see `modules/gpu_worker/README.md`). Terraform will not rebind host devices.
+- **Outputs are list-valued** for Ansible inventory compatibility: `control_plane_ips`, `worker_ips`, `gpu_worker_ips`.
 
 Usage:
 

@@ -18,7 +18,14 @@ gpu_worker_pci_bdfs = ["0000:03:00.0"]
 gpu_worker_template = "ubuntu-22-cloudinit-template"
 
 # SSH keys to inject into all VMs
+# Operator must ensure matching private key is available for Ansible (see ansible/group_vars/all.yml)
 ssh_authorized_keys = ["ssh-rsa AAAA... user@example.com"]
+ssh_public_key_comment = "Matches ~/.ssh/id_rsa"
+
+# Cluster network CIDRs (k3s defaults)
+cluster_cidr = "10.42.0.0/16"  # pod network
+service_cidr = "10.43.0.0/16"  # service network
+# cluster_network_cidr = "192.168.1.0/24"  # optional: node network CIDR for validation
 
 disk_pool = "local-lvm"
 network_bridge = "vmbr0"

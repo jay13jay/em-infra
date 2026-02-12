@@ -2,8 +2,19 @@ output "control_plane_vmid" {
   value = module.control_plane.vmid
 }
 
+output "control_plane_vmids" {
+  description = "List of control plane VM IDs (single-item list for non-HA)"
+  value       = [module.control_plane.vmid]
+}
+
 output "control_plane_ip" {
-  value = module.control_plane.ip_address
+  description = "Control plane IP address (deprecated: use control_plane_ips)"
+  value       = module.control_plane.ip_address
+}
+
+output "control_plane_ips" {
+  description = "List of control plane IPs (single-item list for non-HA)"
+  value       = [module.control_plane.ip_address]
 }
 
 output "worker_vmids" {

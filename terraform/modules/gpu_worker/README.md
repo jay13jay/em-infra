@@ -1,6 +1,6 @@
 GPU Worker module
 =================
-
+**Architecture:** See [docs/architecture-freeze.md](../../../docs/architecture-freeze.md) for GPU worker contract and prerequisites.
 Purpose
 -------
 This module provisions a GPU-enabled Ubuntu cloud-init VM on Proxmox by cloning the same template pattern used by `vm_ubuntu22`, and attaching a single physical NVIDIA GPU via PCI passthrough.

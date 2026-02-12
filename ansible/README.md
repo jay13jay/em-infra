@@ -1,6 +1,8 @@
 Ansible k3s bootstrap
 =====================
 
+**Architecture:** See [docs/architecture-freeze.md](../docs/architecture-freeze.md) for the locked Phase 0 contract.
+
 Overview
 --------
 
@@ -31,6 +33,7 @@ Customisation
 -------------
 
 - Edit `ansible/group_vars/all.yml` to set `ssh_private_key_file`, `k3s_version`, or API wait timeouts.
+- **SSH Key Contract:** Ensure `ssh_private_key_file` matches the public key you injected via Terraform's `ssh_authorized_keys` variable. See [architecture freeze docs](../docs/architecture-freeze.md#4-ssh-and-access) for details.
 
 Notes
 -----
