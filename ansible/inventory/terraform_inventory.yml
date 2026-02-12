@@ -1,0 +1,15 @@
+---
+# Minimal terraform inventory plugin config.
+# This expects Terraform outputs in the environment folder (terraform/environments/k3s-dev).
+# You may need the community terraform inventory plugin available to Ansible.
+plugin: terraform
+strict: False
+
+# Path to the terraform working directory (adjust if you use a different environment)
+path: ../../terraform/environments/k3s-dev
+
+# Map Terraform outputs to inventory groups. Adjust names to match your outputs.
+groups:
+  k3s_control: control_plane_ips
+  k3s_workers: worker_ips
+  k3s_gpu: gpu_worker_ips

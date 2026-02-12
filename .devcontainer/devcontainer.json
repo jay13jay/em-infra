@@ -1,0 +1,27 @@
+{
+  "name": "em-infra - devcontainer",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "workspaceFolder": "/workspaces/em-infra",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/em-infra,type=bind,consistency=cached",
+  "runArgs": ["--init", "--privileged"],
+  "forwardPorts": [3000, 8080],
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker": {
+      "version": "latest",
+      "moby": false
+    }
+  },
+  "postCreateCommand": "bash -lc 'git --version && docker --version && go version && terraform --version'",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "golang.go"
+      ]
+    }
+  }
+}

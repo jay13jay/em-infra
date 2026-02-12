@@ -1,0 +1,41 @@
+---
+name: k3s workers join
+hosts: k3s_workers
+become: true
+vars:
+  control_host: "{{ groups['k3s_control'][0] }}"
+tasks:
+  - name: Wait for control-plane API readiness (delegated)
+    uri:
+      url: "https://127.0.0.1:6443/readyz"
+      status_code: 200
+      validate_certs: no
+    register: api_ready
+    until: api_ready.status == 200
+    retries: "{{ api_wait_retries }}"
+    delay: "{{ api_wait_delay }}"
+    delegate_to: "{{ control_host }}"
+
+  - name: Read node token from control node (delegated)
+    shell: cat /var/lib/rancher/k3s/server/node-token
+    register: node_token
+    changed_when: false
+    delegate_to: "{{ control_host }}"
+
+  - name: Check for existing k3s binary
+    stat:
+      path: /usr/local/bin/k3s
+    register: k3s_bin
+
+  - name: Install k3s agent (idempotent)
+    shell: |
+      {{ ('INSTALL_K3S_VERSION=' + k3s_version) if k3s_version | default('') else '' }} K3S_URL="https://{{ hostvars[control_host].ansible_host | default(hostvars[control_host].inventory_hostname) }}:6443" K3S_TOKEN="{{ node_token.stdout }}" sh -s - agent
+    args:
+      executable: /bin/bash
+    when: not k3s_bin.stat.exists
+
+  - name: Ensure k3s service is enabled and running
+    systemd:
+      name: k3s
+      state: started
+      enabled: yes

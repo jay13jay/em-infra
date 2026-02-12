@@ -1,0 +1,8 @@
+# Ignore local Terraform state and secrets
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+tfplan
+terraform.tfvars
+.override.tfvars
+.override.tfvars.json
