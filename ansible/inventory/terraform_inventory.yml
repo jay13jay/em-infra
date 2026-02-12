@@ -2,13 +2,20 @@
 # Minimal terraform inventory plugin config.
 # This expects Terraform outputs in the environment folder (terraform/environments/k3s-dev).
 # You may need the community terraform inventory plugin available to Ansible.
-plugin: terraform
+---
+# Use the cloud.terraform collection's terraform_state plugin to build an
+# inventory from a Terraform state file. This keeps inventory discovery in
+# Ansible while letting Terraform own the infra state.
+plugin: cloud.terraform.terraform_state
 strict: False
 
-# Path to the terraform working directory (adjust if you use a different environment)
-path: ../../terraform/environments/k3s-dev
+# Use a local state file by default. Operators using remote backends should
+# create a separate inventory file pointing at their backend (S3, HTTP, etc.).
+backend_type: local
+backend_config:
+  path: ../../terraform/environments/k3s-dev/terraform.tfstate
 
-# Map Terraform outputs to inventory groups. Adjust names to match your outputs.
+# Map Terraform outputs (or state resources) to inventory groups.
 groups:
   k3s_control: control_plane_ips
   k3s_workers: worker_ips

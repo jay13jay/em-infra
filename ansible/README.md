@@ -35,6 +35,22 @@ Customisation
 - Edit `ansible/group_vars/all.yml` to set `ssh_private_key_file`, `k3s_version`, or API wait timeouts.
 - **SSH Key Contract:** Ensure `ssh_private_key_file` matches the public key you injected via Terraform's `ssh_authorized_keys` variable. See [architecture freeze docs](../docs/architecture-freeze.md#4-ssh-and-access) for details.
 
+Collections / Inventory Plugin
+-----------------------------
+
+This repo supports using Ansible's `cloud.terraform` collection to build inventory
+directly from Terraform state. Install the collection on your control machine or CI:
+
+```bash
+LANG=C.UTF-8 ansible-galaxy collection install cloud.terraform
+```
+
+Use `ansible/inventory/terraform_inventory.yml` (already configured) or
+`ansible/inventory/terraform_state_local_example.yml` for a local state file.
+If you prefer the `community.general` terraform plugin, the older plugin can also
+be used but `cloud.terraform.terraform_state` is recommended for state-file-driven
+inventories and has richer backend support.
+
 Notes
 -----
 
