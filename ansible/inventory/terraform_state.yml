@@ -5,7 +5,7 @@ plugin: cloud.terraform.terraform_state
 strict: False
 backend_type: local
 backend_config:
-  path: ../../terraform/environments/k3s-dev/terraform.tfstate
+  path: /workspaces/em-infra/terraform/environments/k3s-dev/terraform.tfstate
 
 groups:
   k3s_control: control_plane_ips

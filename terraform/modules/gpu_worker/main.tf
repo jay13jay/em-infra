@@ -1,5 +1,6 @@
 locals {
-  hostpci_assignment = var.x_vga ? "${var.gpu_pci_bdf},pcie=1,x-vga=1" : "${var.gpu_pci_bdf},pcie=1"
+  hostpci_host = var.gpu_pci_bdf
+  hostpci_pcie = 1
 }
 
 resource "proxmox_vm_qemu" "this" {
@@ -8,19 +9,23 @@ resource "proxmox_vm_qemu" "this" {
   clone       = var.template
   full_clone  = true
 
-  cores  = var.cores
+  cpu {
+    cores = var.cores
+  }
   memory = var.memory_mb
 
   scsihw  = "virtio-scsi-pci"
   os_type = "cloud-init"
 
   disk {
-    type    = "scsi"
+    type    = "disk"
     storage = var.disk_pool
+    slot    = "scsi${var.disk_slot}"
     size    = format("%dG", var.disk_gb)
   }
 
   network {
+    id     = var.network_id
     model  = "virtio"
     bridge = var.network_bridge
   }
@@ -33,5 +38,8 @@ resource "proxmox_vm_qemu" "this" {
   ci_wait = var.wait_for_ip_timeout
 
   # Attach the GPU via PCI passthrough. One GPU per VM only.
-  hostpci0 = local.hostpci_assignment
+  hostpci {
+    host = local.hostpci_host
+    pcie = local.hostpci_pcie
+  }
 }

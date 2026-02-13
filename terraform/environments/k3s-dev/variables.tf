@@ -21,6 +21,13 @@ variable "proxmox_user" {
   default     = null
 }
 
+variable "proxmox_password" {
+  type        = string
+  description = "Proxmox PAM password for pm_user (optional; prefer API tokens)"
+  default     = null
+  sensitive   = true
+}
+
 variable "env_name" {
   type        = string
   description = "Short environment name used as VM name prefix"

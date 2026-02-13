@@ -84,3 +84,15 @@ variable "wait_for_ip_timeout" {
   type        = number
   default     = 300
 }
+
+variable "disk_slot" {
+  description = "Device slot/index for the VM disk (scsi slot)."
+  type        = number
+  default     = 0
+}
+
+variable "network_id" {
+  description = "Numeric id for the network interface (net0=0, net1=1)."
+  type        = number
+  default     = 0
+}

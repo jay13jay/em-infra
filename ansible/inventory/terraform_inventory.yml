@@ -1,8 +1,4 @@
 ---
-# Minimal terraform inventory plugin config.
-# This expects Terraform outputs in the environment folder (terraform/environments/k3s-dev).
-# You may need the community terraform inventory plugin available to Ansible.
----
 # Use the cloud.terraform collection's terraform_state plugin to build an
 # inventory from a Terraform state file. This keeps inventory discovery in
 # Ansible while letting Terraform own the infra state.
