@@ -38,5 +38,6 @@ resource "proxmox_vm_qemu" "this" {
 
   // enable qemu-guest-agent for IP detection and graceful shutdown
   agent   = var.enable_qga ? 1 : 0
+  agent_timeout = var.agent_timeout
   ci_wait = var.wait_for_ip_timeout
 }

@@ -85,6 +85,12 @@ variable "wait_for_ip_timeout" {
   default     = 300
 }
 
+variable "agent_timeout" {
+  description = "Seconds to wait for the QEMU guest agent to respond while gathering IPs"
+  type        = number
+  default     = 120
+}
+
 variable "disk_slot" {
   description = "Device slot/index for the VM disk (scsi slot)."
   type        = number

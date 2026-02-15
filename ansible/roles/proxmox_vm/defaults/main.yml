@@ -1,0 +1,10 @@
+---
+# Defaults for proxmox_vm
+vmid: 11000
+vm_name: seed-test-{{ vmid }}
+vm_memory: 2048
+vm_cores: 2
+vm_disk_gb: 12
+vm_node: vmhost
+iso_path: /var/lib/vz/template/iso/seed.iso
+bridge: vmbr0

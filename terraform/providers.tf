@@ -9,8 +9,8 @@ terraform {
   required_providers {
     proxmox = {
       source  = "Telmate/proxmox"
-      # Pin to a specific v3 pre-release that includes Proxmox 9 fixes
-      version = "3.0.2-rc01"
+      # Pin to the requested v3 pre-release (user requested v3.0.2-rc7)
+      version = "3.0.2-rc7"
     }
   }
 }
