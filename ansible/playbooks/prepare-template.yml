@@ -1,0 +1,148 @@
+---
+- name: Prepare VM template for Proxmox (ensure DHCP + cloud-init + qemu-guest-agent)
+  hosts: all
+  become: true
+  gather_facts: true
+  vars:
+    netplan_path: /etc/netplan/01-dhcp.yaml
+
+  tasks:
+    - name: Update apt cache (Debian/Ubuntu)
+      ansible.builtin.apt:
+        update_cache: yes
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - name: Install required packages (cloud-init, qemu-guest-agent, netplan)
+      ansible.builtin.package:
+        name:
+          - cloud-init
+          - qemu-guest-agent
+          - netplan.io
+        state: present
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - name: Ensure qemu-guest-agent enabled and running
+      ansible.builtin.systemd:
+        name: qemu-guest-agent
+        enabled: true
+        state: started
+      ignore_errors: true
+
+    - name: Ensure cloud-init service enabled and running
+      ansible.builtin.systemd:
+        name: cloud-init
+        enabled: true
+        state: started
+      ignore_errors: true
+
+    - name: Write a conservative netplan file that matches Ethernet interfaces and enables DHCP
+      ansible.builtin.copy:
+        dest: "{{ netplan_path }}"
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          network:
+            version: 2
+            renderer: networkd
+            ethernets:
+              dhcp_match:
+                match:
+                  name: e*
+                dhcp4: true
+
+    - name: Run netplan apply (if present)
+      ansible.builtin.command:
+        cmd: netplan apply
+      register: netplan_apply
+      changed_when: false
+      failed_when: false
+
+    - name: Determine candidate primary interface
+      ansible.builtin.set_fact:
+        primary_iface: >-
+          {{ (ansible_facts.interfaces | default([]) | reject('equalto','lo') | list)[0] | default('eth0') }}
+
+    - name: Force a DHCP request on primary interface
+      ansible.builtin.command:
+        cmd: dhclient -v {{ primary_iface }}
+      register: dhclient_out
+      ignore_errors: true
+
+    - name: Wait for an IPv4 address on primary interface
+      ansible.builtin.wait_for:
+        timeout: 120
+        host: "{{ inventory_hostname }}"
+        port: 22
+      when: inventory_hostname is search('\d+\.\d+\.\d+\.\d+')
+
+    - name: Show assigned IPv4 address (debug)
+      ansible.builtin.command:
+        cmd: ip -4 -o addr show {{ primary_iface }}
+      register: ip_out
+      failed_when: false
+
+    - name: Print IP discovery result
+      ansible.builtin.debug:
+        msg: "Interface {{ primary_iface }}: {{ ip_out.stdout | default('no-ip-detected') }}"
+
+    - name: Check qemu-guest-agent version (optional)
+      ansible.builtin.command:
+        cmd: qemu-ga --version
+      register: qga_ver
+      failed_when: false
+      changed_when: false
+
+    - name: Debug qemu-guest-agent
+      ansible.builtin.debug:
+        msg: "qemu-guest-agent: {{ qga_ver.stdout | default('not-found') }}"
+
+- name: Re-template VM on Proxmox (optional)
+  hosts: localhost
+  gather_facts: false
+  vars:
+    retemplate: "{{ retemplate | default(false) }}"
+    proxmox_host: "{{ proxmox_host | default('') }}"
+    proxmox_user: "{{ proxmox_user | default('root@pam') }}"
+    vmid: "{{ vmid | default('') }}"
+    retemplate_timeout: "{{ retemplate_timeout | default(300) }}"
+
+  tasks:
+    - name: Skip retemplating when disabled
+      ansible.builtin.debug:
+        msg: "Retemplate disabled; set -e retemplate=true proxmox_host=... proxmox_user=... vmid=... to enable"
+      when: not retemplate
+
+    - name: Shutdown VM on Proxmox via SSH
+      ansible.builtin.shell: |
+        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {{ proxmox_user }}@{{ proxmox_host }} "qm shutdown {{ vmid }}"
+      register: shutdown_cmd
+      failed_when: false
+      when: retemplate
+
+    - name: Poll for VM stopped state via Proxmox (qm status)
+      ansible.builtin.shell: |
+        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {{ proxmox_user }}@{{ proxmox_host }} "qm status {{ vmid }} || true"
+      register: status_cmd
+      until: "status_cmd.stdout is search('status: stopped')"
+      retries: "{{ (retemplate_timeout | int) // 5 }}"
+      delay: 5
+      failed_when: false
+      when: retemplate
+
+    - name: Force stop VM if still running
+      ansible.builtin.shell: |
+        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {{ proxmox_user }}@{{ proxmox_host }} "qm stop {{ vmid }}"
+      when: "retemplate and (status_cmd.stdout is not search('status: stopped'))"
+      ignore_errors: true
+
+    - name: Convert VM to template on Proxmox
+      ansible.builtin.shell: |
+        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {{ proxmox_user }}@{{ proxmox_host }} "qm template {{ vmid }}"
+      register: template_cmd
+      failed_when: template_cmd.rc != 0
+      when: retemplate
+
+    - name: Show retemplate result
+      ansible.builtin.debug:
+        msg: "Retemplate output: {{ template_cmd.stdout | default(template_cmd.stderr) }}"

@@ -1,0 +1,8 @@
+---
+# Defaults for cloudinit_seed
+build_output_dir: "images/build"
+build_seed_name: "seed.iso"
+build_user: ubuntu
+build_hostname: ubuntu-seed
+build_instance_id: seed-{{ lookup('pipe','date +%s') }}
+build_ssh_pubkey: ""
