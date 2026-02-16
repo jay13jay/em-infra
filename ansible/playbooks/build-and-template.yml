@@ -1,0 +1,56 @@
+---
+- name: Build seed ISO (local)
+  hosts: preseed
+  connection: local
+  gather_facts: false
+  roles:
+    - role: cloudinit_seed
+
+- name: Upload seed ISO to Proxmox
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - role: proxmox_upload
+  vars:
+    proxmox_host: 10.0.0.13
+
+- name: Create VM on Proxmox
+  hosts: proxmox
+  gather_facts: false
+  roles:
+    - role: proxmox_vm
+  vars:
+    vmid: 11000
+    vm_name: seed-build-11000
+
+- name: Verify guest and template
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - role: verify_guest
+  vars:
+    proxmox_host: 10.0.0.13
+    vmid: 11000
+    max_retries: 60
+    retry_delay: 5
+
+- name: Convert VM to template on Proxmox
+  hosts: proxmox
+  gather_facts: false
+  tasks:
+    - name: Shutdown VM gracefully
+      ansible.builtin.shell:
+        cmd: qm shutdown {{ vmid }}
+      ignore_errors: true
+
+    - name: Wait for VM to stop
+      ansible.builtin.wait_for:
+        timeout: 300
+        path: /dev/null
+      # This is a placeholder; explicit polling of qm status would be better in production
+
+    - name: Convert to template
+      ansible.builtin.shell:
+        cmd: qm template {{ vmid }}

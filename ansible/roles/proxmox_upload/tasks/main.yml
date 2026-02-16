@@ -1,0 +1,25 @@
+---
+- name: Ensure remote ISO directory exists on Proxmox
+  ansible.builtin.file:
+    path: "{{ remote_iso_dir }}"
+    state: directory
+    mode: '0755'
+  delegate_to: "{{ proxmox_host }}"
+
+- name: Check if seed ISO already exists on Proxmox
+  ansible.builtin.stat:
+    path: "{{ remote_iso_dir }}/{{ seed_name }}"
+  register: remote_iso_stat
+  delegate_to: "{{ proxmox_host }}"
+
+- name: Upload seed ISO to Proxmox host
+  ansible.builtin.copy:
+    src: "{{ local_build_output_dir }}/{{ seed_name }}"
+    dest: "{{ remote_iso_dir }}/{{ seed_name }}"
+    mode: '0644'
+  when: not remote_iso_stat.stat.exists
+  delegate_to: "{{ proxmox_host }}"
+
+- name: Show seed ISO location
+  ansible.builtin.debug:
+    msg: "Seed ISO on Proxmox: {{ remote_iso_dir }}/{{ seed_name }}"

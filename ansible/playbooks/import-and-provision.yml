@@ -1,0 +1,25 @@
+---
+- name: Build seed and upload to Proxmox
+  hosts: preseed
+  connection: local
+  gather_facts: false
+  roles:
+    - role: cloudinit_seed
+
+- name: Upload seed ISO to Proxmox host
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - role: proxmox_upload
+  vars:
+    proxmox_host: 10.0.0.13
+
+- name: Create and start VM on Proxmox
+  hosts: proxmox
+  gather_facts: false
+  roles:
+    - role: proxmox_vm
+  vars:
+    vmid: 11000
+    vm_name: seed-test-11000

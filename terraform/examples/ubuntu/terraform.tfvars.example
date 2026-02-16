@@ -1,0 +1,8 @@
+# Example values for the ubuntu VM example (DO NOT COMMIT SECRETS)
+node = "pve01"
+# template can be a name or VMID of an existing cloud-init-capable template
+template = "ubuntu-22-04-cloudinit"
+
+disk_pool = "local-lvm"
+network_bridge = "vmbr0"
+ssh_authorized_keys = ["ssh-rsa AAAA... your-key ... user@host"]

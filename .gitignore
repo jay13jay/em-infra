@@ -32,3 +32,6 @@ terraform.rc
 id_rsa
 id_rsa.pub
 
+# Local ISO and image downloads used for building templates
+terraform/files/isos/
+

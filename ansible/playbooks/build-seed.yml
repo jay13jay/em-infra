@@ -1,0 +1,12 @@
+---
+- name: Build cloud-init seed ISO for Ubuntu 24
+  hosts: preseed
+  connection: local
+  gather_facts: false
+  roles:
+    - role: cloudinit_seed
+  vars:
+    build_hostname: ubuntu-seed
+    build_instance_id: seed-{{ lookup('pipe','date +%s') }}
+    # Override with the SSH public key you provided
+    build_ssh_pubkey: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOxQdX0Ol1fwIZXfGRBUOWiuEe/1wR5Uias1knZ0evOB joshh@LivingRoomPC"

@@ -1,0 +1,21 @@
+---
+name: k3s site
+hosts: all
+gather_facts: yes
+serial: 0
+
+pre_tasks:
+  - name: Ensure groups exist (k3s_gpu may be empty but present)
+    add_host:
+      name: dummy-for-gpu-group
+      groups: k3s_gpu
+    run_once: true
+
+roles: []
+
+tasks: []
+
+# Play ordering: run control first, then workers
+
+- import_playbook: control-plane.yml
+- import_playbook: workers.yml

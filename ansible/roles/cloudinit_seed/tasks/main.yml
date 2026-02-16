@@ -1,0 +1,50 @@
+---
+- name: Ensure build output directory exists
+  ansible.builtin.file:
+    path: "{{ build_output_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Render user-data from template
+  ansible.builtin.template:
+    src: "../../../../images/cloud-init/ubuntu-24/user-data.j2"
+    dest: "{{ build_output_dir }}/user-data"
+    mode: '0644'
+  vars:
+    build_ssh_pubkey: "{{ build_ssh_pubkey }}"
+    hostname: "{{ build_hostname }}"
+    instance_id: "{{ build_instance_id }}"
+
+- name: Render meta-data from template
+  ansible.builtin.template:
+    src: "../../../../images/cloud-init/ubuntu-24/meta-data.j2"
+    dest: "{{ build_output_dir }}/meta-data"
+    mode: '0644'
+  vars:
+    hostname: "{{ build_hostname }}"
+    instance_id: "{{ build_instance_id }}"
+
+- name: Check for cloud-localds command
+  ansible.builtin.command:
+    cmd: which cloud-localds
+  register: cloud_localds_check
+  changed_when: false
+  failed_when: false
+
+- name: Fail if cloud-localds is not available
+  ansible.builtin.fail:
+    msg: "cloud-localds is required on the controller to build seed ISOs. Install cloud-image-utils package."
+  when: cloud_localds_check.rc != 0
+
+- name: Build seed ISO using cloud-localds
+  ansible.builtin.command:
+    cmd: >-
+      cloud-localds --verbose {{ build_output_dir }}/{{ build_seed_name }}
+      {{ build_output_dir }}/user-data {{ build_output_dir }}/meta-data
+  args:
+    creates: "{{ build_output_dir }}/{{ build_seed_name }}"
+  register: seed_build
+
+- name: Show seed build result
+  ansible.builtin.debug:
+    var: seed_build.stdout_lines

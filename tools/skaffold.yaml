@@ -1,0 +1,18 @@
+apiVersion: skaffold/v2beta28
+kind: Config
+build:
+  local:
+    useBuildkit: true
+  artifacts:
+    - image: ghcr.io/your-org/example-service
+      context: services/example-service
+      docker:
+        dockerfile: Dockerfile
+profiles:
+  - name: dev
+    build:
+      local:
+        push: false
+    deploy:
+      kustomize:
+        paths: ["k8s/overlays/dev"]

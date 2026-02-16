@@ -1,0 +1,6 @@
+---
+# Defaults for verify_guest
+max_retries: 40
+retry_delay: 5
+proxmox_host: 10.0.0.13
+vmid: 11000
