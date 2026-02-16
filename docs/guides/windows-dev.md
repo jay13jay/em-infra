@@ -28,4 +28,4 @@ Troubleshooting (quick)
 - If Docker CLI is unavailable in WSL: restart Docker Desktop and run `wsl --shutdown`.
 - If GPU containers fail: update Windows NVIDIA driver and `wsl --update`.
 
-See `docs/onboarding.md` for an actionable checklist for new devs.
+See `docs/guides/onboarding.md` for an actionable checklist for new devs.

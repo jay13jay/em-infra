@@ -9,10 +9,10 @@
 
 ## Navigation
 
-- Docs index: [docs/README.md](./README.md)
-- Roadmap (execution sequencing): [docs/infra-roadmap-single-host-k3s-dev.md](./infra-roadmap-single-host-k3s-dev.md)
-- Target architecture (technical contract): [docs/EM-Infra-Talos-Proxmox-Architecture.md](./EM-Infra-Talos-Proxmox-Architecture.md)
-- Phase 1 implementation tracker: [docs/phase-1-implementation-tracker.md](./phase-1-implementation-tracker.md)
+- Docs index: [docs/README.md](../README.md)
+- Roadmap (execution sequencing): [docs/planning/infra-roadmap-single-host-k3s-dev.md](./infra-roadmap-single-host-k3s-dev.md)
+- Target architecture (technical contract): [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
+- Phase 1 implementation tracker: [docs/implementation/phase-1-implementation-tracker.md](../implementation/phase-1-implementation-tracker.md)
 
 ---
 
@@ -20,7 +20,7 @@
 
 This roadmap is aligned to the Talos architecture document.
 
-- If a task in this roadmap conflicts with [docs/EM-Infra-Talos-Proxmox-Architecture.md](./EM-Infra-Talos-Proxmox-Architecture.md), the Talos architecture document is canonical.
+- If a task in this roadmap conflicts with [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../contracts/EM-Infra-Talos-Proxmox-Architecture.md), the Talos architecture document is canonical.
 - k3s/SSH node-configuration tasking is replaced by Talos machine-config generation + Talos bootstrap orchestration.
 - Terraform still owns VM lifecycle only; node OS state is owned by Talos.
 
@@ -72,7 +72,7 @@ This roadmap defines the infrastructure MVP delivery path for this repository:
 
 ### Target architecture contract
 
-- Canonical target architecture: `docs/EM-Infra-Talos-Proxmox-Architecture.md`
+- Canonical target architecture: `docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md`
 - Existing boundary document: `docs/architecture-freeze.md`
 
 ### Known baseline gaps to close

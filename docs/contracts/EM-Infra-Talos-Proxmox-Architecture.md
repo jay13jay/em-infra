@@ -9,9 +9,9 @@
 
 # Navigation
 
-- Docs index: [docs/README.md](./README.md)
-- Architecture contract (this document): [docs/EM-Infra-Talos-Proxmox-Architecture.md](./EM-Infra-Talos-Proxmox-Architecture.md)
-- Delivery sequencing roadmap: [docs/infra-roadmap-single-host-k3s-dev.md](./infra-roadmap-single-host-k3s-dev.md)
+- Docs index: [docs/README.md](../README.md)
+- Architecture contract (this document): [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](./EM-Infra-Talos-Proxmox-Architecture.md)
+- Delivery sequencing roadmap: [docs/planning/infra-roadmap-single-host-k3s-dev.md](../planning/infra-roadmap-single-host-k3s-dev.md)
 
 ---
 

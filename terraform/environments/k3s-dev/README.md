@@ -1,6 +1,6 @@
 # k3s-dev environment
 
-**Architecture:** See [docs/EM-Infra-Talos-Proxmox-Architecture.md](../../../docs/EM-Infra-Talos-Proxmox-Architecture.md) for the Talos architecture contract.
+**Architecture:** See [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../../../docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md) for the Talos architecture contract.
 
 Purpose: provision VMs for a non-HA Talos Kubernetes development cluster. This environment creates:
 

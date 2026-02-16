@@ -1,7 +1,7 @@
 Ansible Infrastructure Orchestration
 ====================================
 
-**Architecture:** See [docs/EM-Infra-Talos-Proxmox-Architecture.md](../docs/EM-Infra-Talos-Proxmox-Architecture.md) for the Talos contract.
+**Architecture:** See [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md) for the Talos contract.
 
 Overview
 --------

@@ -8,9 +8,11 @@ Quickstart (developer)
 - `docker compose up --build` → fast compose-first iteration.
 - `skaffold dev -p dev` → k8s-parity local dev (requires kind/k3d).
 
-See `docs/` for Windows-specific onboarding, GPU setup, and CI details.
+See the documentation index: [docs/README.md](docs/README.md)
 
 Core infra docs:
 
-- Infrastructure roadmap: [docs/infra-roadmap-single-host-k3s-dev.md](docs/infra-roadmap-single-host-k3s-dev.md)
-- Talos architecture contract: [docs/EM-Infra-Talos-Proxmox-Architecture.md](docs/EM-Infra-Talos-Proxmox-Architecture.md)
+- Docs home/index: [docs/README.md](docs/README.md)
+- Talos architecture contract: [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md)
+- Infrastructure roadmap: [docs/planning/infra-roadmap-single-host-k3s-dev.md](docs/planning/infra-roadmap-single-host-k3s-dev.md)
+- Phase 1 implementation tracker: [docs/implementation/phase-1-implementation-tracker.md](docs/implementation/phase-1-implementation-tracker.md)
