@@ -1,4 +1,4 @@
-# EM-Infra MVP — Single-Host Proxmox Kubernetes Dev Environment Roadmap
+# EM-Infra MVP — Single-Host Proxmox Talos Kubernetes Dev Environment Roadmap
 
 **Owner:** Solo developer + AI assistants  
 **Start Date:** 2026-02-16  
@@ -7,23 +7,40 @@
 
 ---
 
+## Navigation
+
+- Roadmap (execution sequencing): [docs/infra-roadmap-single-host-k3s-dev.md](./infra-roadmap-single-host-k3s-dev.md)
+- Target architecture (technical contract): [docs/EM-Infra-Talos-Proxmox-Architecture.md](./EM-Infra-Talos-Proxmox-Architecture.md)
+
+---
+
+## Scope Alignment (Non-Conflict Contract)
+
+This roadmap is aligned to the Talos architecture document.
+
+- If a task in this roadmap conflicts with [docs/EM-Infra-Talos-Proxmox-Architecture.md](./EM-Infra-Talos-Proxmox-Architecture.md), the Talos architecture document is canonical.
+- k3s/SSH node-configuration tasking is replaced by Talos machine-config generation + Talos bootstrap orchestration.
+- Terraform still owns VM lifecycle only; node OS state is owned by Talos.
+
+---
+
 ## Executive Summary
 
-This roadmap defines the infrastructure MVP for this repository:
+This roadmap defines the infrastructure MVP delivery path for this repository:
 
 - **Platform:** one Proxmox host
-- **Cluster topology:** non-HA k3s (1 control plane + workers + GPU workers)
+- **Cluster topology:** non-HA Talos Kubernetes (1 control plane + workers + GPU workers)
 - **Provisioning model:** Terraform provisions VMs
-- **Configuration model:** Ansible configures k3s and node roles
+- **Configuration model:** Ansible orchestrates Talos config generation, bootstrap order, and post-cluster addons
 - **Primary objective:** fast, reproducible local development environment with minimal operator friction
 
 ### Automation Contract (Locked for MVP)
 
-1. **Prepare template** (cloud-init capable Ubuntu template with guest agent)
-2. **Provision VMs** in Proxmox via Terraform
-3. **Generate/resolve inventory** from Terraform state (dynamic plugin canonical)
-4. **Configure cluster** via Ansible (`site.yml`)
-5. **Validate cluster** and deploy minimal dev workload
+1. **Prepare Talos template** in Proxmox
+2. **Generate Talos machine configs** from inventory intent
+3. **Provision VMs** in Proxmox via Terraform
+4. **Bootstrap Talos cluster** via Ansible + `talosctl`
+5. **Validate cluster and install baseline addons**
 
 ### What this roadmap is optimizing for
 
@@ -34,7 +51,7 @@ This roadmap defines the infrastructure MVP for this repository:
 
 ### Out of scope for this MVP
 
-- HA control plane / external datastore
+- HA control plane / multi-control-plane quorum
 - Multi-host Proxmox orchestration
 - Full GitOps platform rollout
 - Production-grade secrets backend integration
@@ -43,34 +60,25 @@ This roadmap defines the infrastructure MVP for this repository:
 
 ## Current Baseline (Already in Repo)
 
-### Preparation
+### Preparation + provisioning baseline
 
-- Template prep shell automation: `scripts/prepare_template.sh`
-- Template prep Ansible playbook: `ansible/playbooks/prepare-template.yml`
-- Supplemental prep helper: `scripts/prepare_template_ansible.sh`
+- Template prep shell automation exists for current flow: `scripts/prepare_template.sh`
+- Environment provisioning exists: `terraform/environments/k3s-dev/main.tf`
+- Current VM modules exist and are usable as migration references:
+  - `terraform/modules/vm_ubuntu22/`
+  - `terraform/modules/gpu_worker/`
 
-### Provisioning
+### Target architecture contract
 
-- Environment provisioning: `terraform/environments/k3s-dev/main.tf`
-- Core Ubuntu VM module: `terraform/modules/vm_ubuntu22/`
-- GPU worker module: `terraform/modules/gpu_worker/`
-- Output contract for inventory groups: `control_plane_ips`, `worker_ips`, `gpu_worker_ips`
-
-### Configuration
-
-- Cluster bootstrap playbooks: `ansible/playbooks/site.yml`, `ansible/playbooks/control-plane.yml`, `ansible/playbooks/workers.yml`
-- Shared vars: `ansible/group_vars/all.yml`
-
-### Architecture contract
-
-- Locked boundary document: `docs/architecture-freeze.md`
+- Canonical target architecture: `docs/EM-Infra-Talos-Proxmox-Architecture.md`
+- Existing boundary document: `docs/architecture-freeze.md`
 
 ### Known baseline gaps to close
 
-- Confirm and validate canonical dynamic inventory config at `ansible/inventory/terraform_inventory.yml`
-- Root Terraform README is partly outdated vs current environment reality
-- Provider version string drift between root and environment provider constraints
-- No unified orchestrator script for one-command end-to-end run
+- Add/validate Talos inventory model and schema contract (`cluster.yaml`, `nodes.yaml`)
+- Reconcile provider version pinning in root + environment Terraform configs
+- Update Terraform docs to reflect Talos VM provisioning intent
+- Add unified orchestrator script for one-command end-to-end run
 
 ---
 
@@ -80,25 +88,23 @@ This roadmap defines the infrastructure MVP for this repository:
 
 ### Goal
 
-Make sure docs and automation contracts match actual code so day-to-day execution is deterministic.
+Make docs and automation contracts match a Talos-first implementation path.
 
 ### Tasks
 
-- [ ] Add canonical dynamic inventory config at `ansible/inventory/terraform_inventory.yml`
-- [ ] Add local-state example inventory config if needed (`ansible/inventory/terraform_state_local_example.yml`)
+- [ ] Add/validate canonical architecture cross-links in root + infra docs
+- [ ] Define initial inventory intent files for dev (`cluster.yaml`, `nodes.yaml`)
 - [ ] Reconcile provider version pinning in:
   - `terraform/providers.tf`
   - `terraform/environments/k3s-dev/providers.tf`
-- [ ] Update Terraform docs to reflect actual VM provisioning behavior:
+- [ ] Update Terraform docs to reflect Talos-oriented provisioning behavior:
   - `terraform/README.md`
   - `terraform/environments/k3s-dev/README.md` (if needed)
-- [ ] Validate architecture references across docs (`README.md`, `ansible/README.md`, `docs/architecture-freeze.md`)
 
 ### Gate: Phase 1 completion
 
-- [ ] `ansible-inventory -i ansible/inventory/terraform_inventory.yml --list` runs successfully
+- [ ] Architecture and roadmap docs have no contradictory tasking
 - [ ] `terraform -chdir=terraform/environments/k3s-dev validate` passes
-- [ ] Docs no longer conflict about VM/resource scope
 
 ---
 
@@ -106,7 +112,7 @@ Make sure docs and automation contracts match actual code so day-to-day executio
 
 ### Goal
 
-Make VM provisioning on a single Proxmox host predictable and safe to rerun.
+Make Talos VM provisioning on a single Proxmox host predictable and safe to rerun.
 
 ### Tasks
 
@@ -115,7 +121,7 @@ Make VM provisioning on a single Proxmox host predictable and safe to rerun.
   - worker count
   - GPU worker PCI BDF list
 - [ ] Harden variable validation (CIDR, template names, required IDs)
-- [ ] Add/verify explicit output docs consumed by Ansible inventory
+- [ ] Add/verify output contract required by Talos bootstrap orchestration
 - [ ] Define local-state operational rules for solo dev:
   - state file location
   - backup cadence
@@ -130,27 +136,25 @@ Make VM provisioning on a single Proxmox host predictable and safe to rerun.
 
 ---
 
-## Phase 3 (Days 15-21): Cluster Config Reliability (Ansible)
+## Phase 3 (Days 15-21): Cluster Bootstrap Reliability (Talos + Ansible)
 
 ### Goal
 
-Ensure Ansible reliably installs/joins k3s roles from Terraform-derived inventory.
+Ensure Talos bootstrap is reliable, idempotent where expected, and safe to rerun.
 
 ### Tasks
 
-- [ ] Validate role/playbook idempotency for:
-  - control plane install
-  - worker join
-  - GPU worker group handling
-- [ ] Add preflight checks (SSH reachability, sudo, network/API readiness)
+- [ ] Validate config generation workflow (`talos-gen-config`) for controlplane/worker roles
+- [ ] Add preflight checks (Proxmox reachability, Talos API readiness, required tooling)
+- [ ] Validate bootstrap flow (`talos-bootstrap`) and kubeconfig retrieval
 - [ ] Add explicit post-run checks for node readiness
-- [ ] Define failure semantics and rerun behavior in docs (what is safe to rerun, when to clean)
-- [ ] Document expected group mapping contract in one place
+- [ ] Define failure semantics and rerun behavior (safe rerun vs required clean rebuild)
 
 ### Gate: Phase 3 completion
 
-- [ ] `ansible-playbook -i ansible/inventory/terraform_inventory.yml ansible/playbooks/site.yml` succeeds
-- [ ] rerunning playbook causes no harmful changes
+- [ ] Talos bootstrap workflow succeeds end-to-end
+- [ ] Rerun behavior is documented and non-destructive for supported steps
+- [ ] `talosctl ... get members` returns expected node membership
 - [ ] `kubectl get nodes` shows expected control/worker/GPU node set
 
 ---
@@ -165,11 +169,11 @@ Provide both one-command happy path and phased troubleshooting path.
 
 - [ ] Add a top-level orchestrator entrypoint (example target: `scripts/provision_dev_env.sh`)
 - [ ] Implement staged execution with clear checkpoints:
-  - prepare
+  - generate-config
   - provision
-  - configure
+  - bootstrap
   - verify
-- [ ] Add flags for phase-only execution (`--prepare-only`, `--terraform-only`, etc.)
+- [ ] Add flags for phase-only execution (`--generate-only`, `--terraform-only`, etc.)
 - [ ] Emit structured logs/artifacts for each stage
 - [ ] Add destroy/recovery entrypoint for rapid reset
 
@@ -193,7 +197,7 @@ Ship an operationally usable infrastructure MVP with clear runbooks.
 - [ ] Add day-2 runbook:
   - scale workers
   - add/remove GPU worker
-  - rotate SSH key
+  - rotate cluster credentials/secrets workflow
   - retemplate workflow
 - [ ] Add break/fix runbook for top 5 likely failures
 - [ ] Cross-link all docs so operator path is linear from root README
@@ -218,21 +222,23 @@ Ship an operationally usable infrastructure MVP with clear runbooks.
 ## Phased troubleshooting path
 
 ```bash
-# 1) Template prep
-./scripts/prepare_template.sh ...
+# 1) Generate Talos configs
+docker compose run ansible ansible-playbook ansible/playbooks/talos-gen-config.yml
 
 # 2) Provision VMs
-terraform -chdir=terraform/environments/k3s-dev init
-terraform -chdir=terraform/environments/k3s-dev plan -var-file=terraform.tfvars
-terraform -chdir=terraform/environments/k3s-dev apply -var-file=terraform.tfvars
+docker compose run terraform terraform -chdir=terraform/dev apply
 
-# 3) Inspect inventory
-ansible-inventory -i ansible/inventory/terraform_inventory.yml --list
+# 3) Bootstrap cluster
+docker compose run ansible ansible-playbook ansible/playbooks/talos-bootstrap.yml
 
-# 4) Configure cluster
-ansible-playbook -i ansible/inventory/terraform_inventory.yml ansible/playbooks/site.yml
+# 4) Retrieve cluster info (Talos-native)
+talosctl --talosconfig <path-to-talosconfig> --endpoints <control-plane-ip> --nodes <control-plane-ip> get members
+talosctl --talosconfig <path-to-talosconfig> --endpoints <control-plane-ip> kubeconfig ./kubeconfig
 
-# 5) Verify cluster
+# 5) Configure post-cluster addons
+docker compose run ansible ansible-playbook ansible/playbooks/kube-post.yml
+
+# 6) Verify cluster
 kubectl get nodes -o wide
 ```
 
@@ -240,10 +246,10 @@ kubectl get nodes -o wide
 
 ## Risks & Mitigations
 
-### Risk 1: Inventory drift / missing plugin config
+### Risk 1: Inventory intent and generated config drift
 
-- **Impact:** Ansible cannot target Terraform-provisioned hosts
-- **Mitigation:** ship canonical `terraform_inventory.yml`, validate in Phase 1 gate
+- **Impact:** provisioned nodes do not match intended topology
+- **Mitigation:** keep inventory files canonical; validate generated outputs in Phase 1/3 gates
 
 ### Risk 2: Local terraform state corruption or accidental loss
 
@@ -260,18 +266,18 @@ kubectl get nodes -o wide
 - **Impact:** manual cleanup needed, slower dev velocity
 - **Mitigation:** phased mode + checkpointed orchestrator + destroy/reset command
 
-### Risk 5: Shell-heavy tasks reduce idempotency confidence
+### Risk 5: Talos bootstrap ordering mistakes
 
-- **Impact:** reruns create inconsistent state
-- **Mitigation:** add explicit idempotency tests in Phase 3 and tighten task guards
+- **Impact:** cluster creation stalls or partially initializes
+- **Mitigation:** explicit bootstrap sequencing + readiness gates in automation
 
 ---
 
 ## MVP Success Criteria
 
 - [ ] One Proxmox host can reproducibly create: 1 control plane + N workers + N GPU workers
-- [ ] Terraform output contract feeds Ansible inventory without manual host editing
-- [ ] Ansible cluster configuration is rerunnable without destructive side effects
+- [ ] Inventory intent feeds Talos config generation without manual host edits
+- [ ] Talos bootstrap/configuration flow is rerunnable without destructive side effects
 - [ ] One-command and phased execution modes both documented and functional
 - [ ] Validation + teardown runbooks keep troubleshooting time low
 
@@ -283,7 +289,7 @@ kubectl get nodes -o wide
 - CI pipeline automation for infra checks
 - Full secrets manager integration
 - HA topology / multi-control-plane path
-- GitOps bootstrap (Flux/ArgoCD)
+- Full GitOps bootstrap rollout
 
 ---
 
@@ -300,9 +306,9 @@ kubectl get nodes -o wide
 
 ### Immediate next actions (kickoff)
 
-- [ ] Create `ansible/inventory/terraform_inventory.yml`
+- [ ] Create initial dev inventory intent files (`cluster.yaml`, `nodes.yaml`)
 - [ ] Align Terraform provider version constraints
-- [ ] Update Terraform README to match current repository state
+- [ ] Update Terraform README to match Talos-target repository state
 - [ ] Add top-level orchestrator script skeleton
 - [ ] Add validation checklist section to root README
 

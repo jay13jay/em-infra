@@ -4,6 +4,10 @@
 **Date:** 2026-02-12  
 **Purpose:** Define contracts between Terraform, Ansible, and Kubernetes for the k3s-dev environment
 
+> **Legacy Notice:** This document captures the earlier k3s + SSH + guest-agent model.
+> For the active Talos workflow and tasking, use [EM-Infra-Talos-Proxmox-Architecture.md](./EM-Infra-Talos-Proxmox-Architecture.md)
+> and [infra-roadmap-single-host-k3s-dev.md](./infra-roadmap-single-host-k3s-dev.md).
+
 ---
 
 ## Overview
