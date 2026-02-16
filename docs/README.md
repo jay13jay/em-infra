@@ -11,6 +11,11 @@ Use this page first, then follow links by intent (architecture, planning, implem
 - Architecture contract: [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](./contracts/EM-Infra-Talos-Proxmox-Architecture.md)
 - MVP roadmap: [docs/planning/infra-roadmap-single-host-k3s-dev.md](./planning/infra-roadmap-single-host-k3s-dev.md)
 - Active implementation tracker: [docs/implementation/phase-1-implementation-tracker.md](./implementation/phase-1-implementation-tracker.md)
+- Phase 1 task docs:
+   - [docs/implementation/phase-1-task-1-docs-cross-link-alignment.md](./implementation/phase-1-task-1-docs-cross-link-alignment.md)
+   - [docs/implementation/phase-1-task-2-dev-inventory-intent-files.md](./implementation/phase-1-task-2-dev-inventory-intent-files.md)
+   - [docs/implementation/phase-1-task-3-terraform-provider-version-reconciliation.md](./implementation/phase-1-task-3-terraform-provider-version-reconciliation.md)
+   - [docs/implementation/phase-1-task-4-terraform-docs-talos-provisioning-intent.md](./implementation/phase-1-task-4-terraform-docs-talos-provisioning-intent.md)
 
 ---
 

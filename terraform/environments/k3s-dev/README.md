@@ -9,7 +9,7 @@ Purpose: provision VMs for a non-HA Talos Kubernetes development cluster. This e
 - 0..N GPU workers (one per PCI BDF listed in `gpu_worker_pci_bdfs`)
 
 Important notes:
-- This environment only provisions VMs. It does not perform Talos bootstrap or post-cluster addon installation.
+- This environment provisions VMs only. Terraform manages VM lifecycle and host resources; Talos is responsible for node OS configuration and runtime state (bootstrapping and in-cluster lifecycle).
 - GPU workers are created one-per-PCI BDF. To scale GPU workers add/remove entries in `gpu_worker_pci_bdfs`.
 - The `gpu_worker` module expects the GPU to be bound on the host (see `modules/gpu_worker/README.md`). Terraform will not rebind host devices.
 - **Outputs are list-valued** for orchestration compatibility: `control_plane_ips`, `worker_ips`, `gpu_worker_ips`.

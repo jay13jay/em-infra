@@ -22,7 +22,7 @@ This roadmap is aligned to the Talos architecture document.
 
 - If a task in this roadmap conflicts with [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../contracts/EM-Infra-Talos-Proxmox-Architecture.md), the Talos architecture document is canonical.
 - k3s/SSH node-configuration tasking is replaced by Talos machine-config generation + Talos bootstrap orchestration.
-- Terraform still owns VM lifecycle only; node OS state is owned by Talos.
+- Terraform manages VM lifecycle only — it creates and configures virtual machines and host-level resources; Talos is solely responsible for node OS configuration and runtime state (bootstrapping, OS config, and in-cluster lifecycle).
 
 ---
 

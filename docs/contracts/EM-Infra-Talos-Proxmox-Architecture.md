@@ -61,7 +61,7 @@ with a modern immutable model:
 - template cloning
 
 ### Terraform
-- Talos VM provisioning
+- VM provisioning (create/clone/start VMs)
 - VM hardware config
 - network attachment
 - Talos machine config injection
@@ -113,15 +113,11 @@ It is the **single source of truth** for:
 - Talos configs
 - Bootstrap orchestration
 
-## 3. Terraform Owns Infrastructure Only
+## 3. Ownership: Terraform vs Talos
 
-Terraform never configures nodes.
+Terraform manages VM lifecycle only — it creates and configures virtual machines and their host-level resources, and may write machine-config artifacts into VM metadata for Talos to consume. It does not perform node OS runtime configuration.
 
-It only:
-
-- clones Talos VMs
-- injects machine config
-- starts nodes
+Talos is solely responsible for node OS configuration and runtime state (bootstrapping, OS-level configuration, kubelet/runtime lifecycle, and cluster join semantics).
 
 ## 4. Talos Owns Node State
 
