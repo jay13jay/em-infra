@@ -10,19 +10,23 @@ resource "proxmox_vm_qemu" "this" {
   clone       = var.template
   full_clone  = true
 
-  cores  = var.cores
+  cpu {
+    cores = var.cores
+  }
   memory = var.memory_mb
 
   scsihw  = "virtio-scsi-pci"
   os_type = "cloud-init"
 
   disk {
-    type    = "scsi"
+    type    = "disk"
     storage = var.disk_pool
+    slot    = "scsi${var.disk_slot}"
     size    = format("%dG", var.disk_gb)
   }
 
   network {
+    id     = var.network_id
     model  = "virtio"
     bridge = var.network_bridge
   }
@@ -34,5 +38,6 @@ resource "proxmox_vm_qemu" "this" {
 
   // enable qemu-guest-agent for IP detection and graceful shutdown
   agent   = var.enable_qga ? 1 : 0
+  agent_timeout = var.agent_timeout
   ci_wait = var.wait_for_ip_timeout
 }

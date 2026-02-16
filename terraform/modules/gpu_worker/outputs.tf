@@ -25,5 +25,8 @@ output "gpu_pci_bdf" {
 
 output "hostpci_assignment" {
   description = "The final hostpci assignment string used on the VM"
-  value       = local.hostpci_assignment
+  value = {
+    host = local.hostpci_host
+    pcie = local.hostpci_pcie
+  }
 }

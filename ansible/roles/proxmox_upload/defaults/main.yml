@@ -1,0 +1,5 @@
+---
+# Defaults for proxmox_upload
+remote_iso_dir: /var/lib/vz/template/iso
+local_build_output_dir: images/build
+seed_name: seed.iso

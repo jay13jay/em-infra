@@ -9,8 +9,8 @@ terraform {
   required_providers {
     proxmox = {
       source  = "Telmate/proxmox"
-      # Version pinning: allow safe upgrades within major range but avoid unexpected breaking changes
-      version = ">= 2.9, < 4.0"
+      # Pin to the requested v3 pre-release (user requested v3.0.2-rc7)
+      version = "3.0.2-rc7"
     }
   }
 }

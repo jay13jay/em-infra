@@ -1,0 +1,40 @@
+---
+- name: Wait for QEMU guest agent to report interfaces with an IPv4
+  ansible.builtin.shell:
+    cmd: qm agent {{ vmid }} network-get-interfaces
+  register: qm_net
+  retries: "{{ max_retries }}"
+  delay: "{{ retry_delay }}"
+  until: qm_net.stdout is search('ip-address')
+  failed_when: qm_net.rc != 0 and qm_net.stdout is not search('ip-address')
+  delegate_to: "{{ proxmox_host }}"
+
+- name: Show guest-agent network output
+  ansible.builtin.debug:
+    var: qm_net.stdout_lines
+
+- name: Retrieve netplan file from guest via guest-exec
+  ansible.builtin.shell:
+    cmd: qm guest exec {{ vmid }} -- bash -lc 'cat /etc/netplan/01-dhcp.yaml'
+  register: netplan_cat
+  failed_when: false
+  delegate_to: "{{ proxmox_host }}"
+
+- name: Check netplan content for permissive match and dhcp
+  ansible.builtin.assert:
+    that:
+      - "netplan_cat.stdout is search('match:')"
+      - "netplan_cat.stdout is search('dhcp4: true')"
+    fail_msg: 'Netplan does not contain expected permissive match and dhcp4: true'
+    success_msg: 'Netplan looks permissive and has dhcp4: true'
+
+- name: Check qemu-guest-agent service state inside guest
+  ansible.builtin.shell:
+    cmd: qm guest exec {{ vmid }} -- systemctl is-active qemu-guest-agent
+  register: qga_state
+  failed_when: false
+  delegate_to: "{{ proxmox_host }}"
+
+- name: Debug qemu-guest-agent state
+  ansible.builtin.debug:
+    msg: "qemu-guest-agent state: {{ qga_state.stdout | default('unknown') }}"

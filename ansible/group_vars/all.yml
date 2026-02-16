@@ -1,7 +1,9 @@
 ---
 # Global variables for the k3s bootstrap
 ssh_user: ubuntu
-# Path to the private key used to SSH to the instances. Override as needed.
+# Path to the private key used to SSH to the instances.
+# IMPORTANT: This must match the public key injected via Terraform's ssh_authorized_keys variable.
+# Override as needed or use SSH agent.
 ssh_private_key_file: ~/.ssh/id_rsa
 
 # Optional k3s version pin. Empty = installer default/latest.

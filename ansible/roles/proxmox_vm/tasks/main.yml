@@ -1,0 +1,35 @@
+---
+- name: Check if VM already exists
+  ansible.builtin.shell:
+    cmd: qm config {{ vmid }}
+  register: qm_config_check
+  failed_when: false
+
+- name: Create VM if missing
+  ansible.builtin.shell:
+    cmd: >-
+      qm create {{ vmid }} --name {{ vm_name }} --memory {{ vm_memory }} --cores {{ vm_cores }} --scsihw virtio-scsi-pci
+  when: qm_config_check.rc != 0
+
+- name: Set VM disk (create a small disk)
+  ansible.builtin.shell:
+    cmd: >-
+      qm set {{ vmid }} --scsi0 local-zfs:{{ vm_disk_gb }}M
+  when: qm_config_check.rc != 0
+  failed_when: false
+
+- name: Attach cloud-init seed ISO
+  ansible.builtin.shell:
+    cmd: >-
+      qm set {{ vmid }} --ide2 {{ iso_path }},media=cdrom
+
+- name: Enable QEMU guest agent and cloud-init ipconfig
+  ansible.builtin.shell:
+    cmd: >-
+      qm set {{ vmid }} --agent 1 --ipconfig0 ip=dhcp
+
+- name: Start VM
+  ansible.builtin.shell:
+    cmd: qm start {{ vmid }}
+  register: vm_start
+  failed_when: vm_start.rc != 0
