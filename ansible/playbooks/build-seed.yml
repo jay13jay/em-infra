@@ -8,5 +8,5 @@
   vars:
     build_hostname: ubuntu-seed
     build_instance_id: seed-{{ lookup('pipe','date +%s') }}
-    # Override with the SSH public key you provided
-    build_ssh_pubkey: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOxQdX0Ol1fwIZXfGRBUOWiuEe/1wR5Uias1knZ0evOB joshh@LivingRoomPC"
+    # Provide via -e build_ssh_pubkey="ssh-ed25519 AAAA..." or env BUILD_SSH_PUBKEY
+    build_ssh_pubkey: "{{ lookup('env', 'BUILD_SSH_PUBKEY') | default('', true) }}"

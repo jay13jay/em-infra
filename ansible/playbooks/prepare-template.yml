@@ -97,7 +97,6 @@
       ansible.builtin.debug:
         msg: "qemu-guest-agent: {{ qga_ver.stdout | default('not-found') }}"
 
----
 - name: Re-template VM on Proxmox (optional)
   hosts: localhost
   gather_facts: false
@@ -125,7 +124,7 @@
       ansible.builtin.shell: |
         ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {{ proxmox_user }}@{{ proxmox_host }} "qm status {{ vmid }} || true"
       register: status_cmd
-      until: status_cmd.stdout is search('status: stopped')
+      until: "status_cmd.stdout is search('status: stopped')"
       retries: "{{ (retemplate_timeout | int) // 5 }}"
       delay: 5
       failed_when: false
@@ -134,7 +133,7 @@
     - name: Force stop VM if still running
       ansible.builtin.shell: |
         ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {{ proxmox_user }}@{{ proxmox_host }} "qm stop {{ vmid }}"
-      when: retemplate and (status_cmd.stdout is not search('status: stopped'))
+      when: "retemplate and (status_cmd.stdout is not search('status: stopped'))"
       ignore_errors: true
 
     - name: Convert VM to template on Proxmox

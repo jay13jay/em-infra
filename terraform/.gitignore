@@ -6,3 +6,7 @@ tfplan
 terraform.tfvars
 .override.tfvars
 .override.tfvars.json
+
+# Local image artifacts
+files/isos/*.iso
+files/isos/*.img

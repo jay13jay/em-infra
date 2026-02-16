@@ -5,4 +5,4 @@ build_seed_name: "seed.iso"
 build_user: ubuntu
 build_hostname: ubuntu-seed
 build_instance_id: seed-{{ lookup('pipe','date +%s') }}
-build_ssh_pubkey: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOxQdX0Ol1fwIZXfGRBUOWiuEe/1wR5Uias1knZ0evOB joshh@LivingRoomPC"
+build_ssh_pubkey: ""

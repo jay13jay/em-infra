@@ -5,6 +5,14 @@
     state: directory
     mode: '0755'
 
+- name: Validate SSH public key input for cloud-init
+  ansible.builtin.assert:
+    that:
+      - build_ssh_pubkey | trim | length > 0
+      - build_ssh_pubkey is search('^ssh-(rsa|ed25519)\\s+')
+    fail_msg: "Set build_ssh_pubkey via -e build_ssh_pubkey='ssh-ed25519 AAAA...' or env BUILD_SSH_PUBKEY."
+    success_msg: "build_ssh_pubkey provided"
+
 - name: Render user-data from template
   ansible.builtin.template:
     src: "../../../../images/cloud-init/ubuntu-24/user-data.j2"

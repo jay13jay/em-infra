@@ -13,6 +13,7 @@ node_modules/
 *.pickle
 /coverage/
 *.tgz
+.tmp/
 
 # Terraform sensitive / local
 *.tfvars
