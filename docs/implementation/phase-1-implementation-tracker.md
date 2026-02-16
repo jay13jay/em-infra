@@ -43,6 +43,13 @@ If any task below conflicts with the architecture document, [docs/contracts/EM-I
 
 ## Task Tracker
 
+### Task documents
+
+- P1-T1: [docs/implementation/phase-1-task-1-docs-cross-link-alignment.md](./phase-1-task-1-docs-cross-link-alignment.md)
+- P1-T2: [docs/implementation/phase-1-task-2-dev-inventory-intent-files.md](./phase-1-task-2-dev-inventory-intent-files.md)
+- P1-T3: [docs/implementation/phase-1-task-3-terraform-provider-version-reconciliation.md](./phase-1-task-3-terraform-provider-version-reconciliation.md)
+- P1-T4: [docs/implementation/phase-1-task-4-terraform-docs-talos-provisioning-intent.md](./phase-1-task-4-terraform-docs-talos-provisioning-intent.md)
+
 ## 1) Docs & architecture cross-link alignment
 
 **Goal:** Ensure operator path is linear and no docs contradict ownership boundaries.
@@ -169,7 +176,7 @@ Use this section as implementation progresses.
 ### Decisions
 
 - Architecture document remains canonical for conflicts.
-- Terraform owns VM lifecycle only; Talos owns node OS state.
+- Terraform manages VM lifecycle only — it creates and configures virtual machines and host-level resources; Talos is solely responsible for node OS configuration and runtime state.
 
 ### Open questions
 

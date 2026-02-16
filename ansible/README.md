@@ -6,7 +6,7 @@ Ansible Infrastructure Orchestration
 Overview
 --------
 
-This folder contains automation scaffolding for infrastructure bring-up. Terraform remains responsible for VM provisioning; Ansible orchestrates bootstrap workflows.
+This folder contains automation scaffolding for infrastructure bring-up. Terraform manages VM lifecycle only (VM creation and host-level resources); Talos is responsible for node OS configuration and runtime state. Ansible orchestrates bootstrap workflows.
 
 Principles
 ----------

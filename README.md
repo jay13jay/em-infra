@@ -10,7 +10,7 @@ Quickstart (developer)
 
 See the documentation index: [docs/README.md](docs/README.md)
 
-Core infra docs:
+## Navigation
 
 - Docs home/index: [docs/README.md](docs/README.md)
 - Talos architecture contract: [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md)

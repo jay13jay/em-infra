@@ -3,6 +3,8 @@
 This directory contains the Terraform configuration for the Proxmox infrastructure.
 It is organized into environments and modules.
 
+Terraform manages VM lifecycle only — it creates and configures virtual machines and host-level resources; Talos is solely responsible for node OS configuration and runtime state (bootstrapping, OS configuration, and kubelet/runtime lifecycle).
+
 ## Structure
 
 ```
