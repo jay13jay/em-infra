@@ -1,51 +1,54 @@
-Ansible k3s bootstrap
-=====================
+Ansible Infrastructure Orchestration
+====================================
 
-**Architecture:** See [docs/architecture-freeze.md](../docs/architecture-freeze.md) for the locked Phase 0 contract.
+**Architecture:** See [docs/EM-Infra-Talos-Proxmox-Architecture.md](../docs/EM-Infra-Talos-Proxmox-Architecture.md) for the Talos contract.
 
 Overview
 --------
 
-This folder contains a minimal, readable Ansible scaffold to bootstrap a single-node k3s control plane and join workers. Terraform remains responsible for infrastructure provisioning; Ansible performs configuration and cluster bootstrap.
+This folder contains automation scaffolding for infrastructure bring-up. Terraform remains responsible for VM provisioning; Ansible orchestrates bootstrap workflows.
 
 Principles
 ----------
 
-- Use Ansible's terraform inventory plugin to generate hosts from Terraform outputs.
+- For Talos workflows, use inventory intent (static/reserved addresses) and `talosctl` for post-boot cluster discovery.
 - Keep playbooks simple and idempotent.
-- Avoid copying sensitive tokens; workers read the join token directly from the control node at runtime.
-- Provide an empty `k3s_gpu` group for future GPU-specific tasks.
+- Avoid relying on guest-agent-only metadata as a source of truth.
 
 Quickstart
 ----------
 
-1. Ensure Terraform has been applied for your environment (e.g. `terraform/environments/k3s-dev`).
-2. Make sure Ansible has the terraform inventory plugin available (community plugins may be required).
-3. Preview inventory:
+Talos-oriented workflow:
 
-   ansible-inventory -i ansible/inventory/terraform_inventory.yml --list
+1. Ensure Terraform has been applied for your environment.
+2. Bootstrap Talos cluster (per roadmap/architecture flow).
+3. Retrieve live cluster information with `talosctl`:
 
-4. Run the site playbook:
+   ```bash
+   talosctl --talosconfig <path-to-talosconfig> --endpoints <control-plane-ip> --nodes <control-plane-ip> get members
+   talosctl --talosconfig <path-to-talosconfig> --endpoints <control-plane-ip> kubeconfig ./kubeconfig
+   ```
 
-   ansible-playbook -i ansible/inventory/terraform_inventory.yml ansible/playbooks/site.yml
+Legacy k3s workflow remains available in existing playbooks (`site.yml`, `control-plane.yml`, `workers.yml`) and can still use Terraform inventory where guest-agent IP discovery is present.
 
 Customisation
 -------------
 
-- Edit `ansible/group_vars/all.yml` to set `ssh_private_key_file`, `k3s_version`, or API wait timeouts.
-- **SSH Key Contract:** Ensure `ssh_private_key_file` matches the public key you injected via Terraform's `ssh_authorized_keys` variable. See [architecture freeze docs](../docs/architecture-freeze.md#4-ssh-and-access) for details.
+- Edit `ansible/group_vars/all.yml` for legacy k3s tuning (`ssh_private_key_file`, `k3s_version`, API wait timeouts).
 
 Collections / Inventory Plugin
 -----------------------------
 
-This repo supports using Ansible's `cloud.terraform` collection to build inventory
-directly from Terraform state. Install the collection on your control machine or CI:
+Terraform dynamic inventory is supported for legacy SSH-based workflows.
+It is not the canonical path for Talos nodes because Talos does not provide qemu guest-agent IP metadata.
+
+If you need legacy dynamic inventory, install the collection on your control machine or CI:
 
 ```bash
 LANG=C.UTF-8 ansible-galaxy collection install cloud.terraform
 ```
 
-Use `ansible/inventory/terraform_inventory.yml` (already configured) or
+Use `ansible/inventory/terraform_inventory.yml` (legacy path) or
 `ansible/inventory/terraform_state_local_example.yml` for a local state file.
 If you prefer the `community.general` terraform plugin, the older plugin can also
 be used but `cloud.terraform.terraform_state` is recommended for state-file-driven
@@ -54,5 +57,5 @@ inventories and has richer backend support.
 Notes
 -----
 
-- This scaffold assumes Ubuntu 22.04 guests and SSH user `ubuntu` (consistent with Terraform modules).
-- The inventory plugin config references the Terraform environment; update the path if you use a different environment.
+- Talos workflows should prefer static/reserved node addresses and `talosctl` state inspection.
+- The inventory plugin config references the Terraform environment and is intended for non-Talos SSH-based flows.

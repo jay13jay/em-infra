@@ -10,7 +10,7 @@ terraform {
     proxmox = {
       source  = "Telmate/proxmox"
       # Pin to the requested v3 pre-release (user requested v3.0.2-rc7)
-      version = "3.0.2-rc7"
+      version = "3.0.2-rc07"
     }
   }
 }
