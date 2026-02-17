@@ -26,7 +26,7 @@ This naming is validated by `ansible/playbooks/prepare-template.yml`.
 
 Prerequisites
 -------------
-- Proxmox host in `ansible/inventory/proxmox/hosts.ini`
+- Proxmox host in `ansible/inventory/prepare-template.ini`
 - SSH access to Proxmox host with permission to run `qm` and `pvesm`
 - Talos ISO present on Proxmox ISO storage (default expectation):
   - storage: `local`
@@ -43,7 +43,7 @@ Step 1: Build VM + boot installer
 Run:
 
 ```bash
-ansible-playbook -i ansible/inventory/proxmox/hosts.ini ansible/playbooks/prepare-template.yml \
+ansible-playbook -i ansible/inventory/prepare-template.ini ansible/playbooks/prepare-template.yml \
   -e talos_version=1.12.4 \
   -e talos_template_vmid=9000 \
   -e talos_template_storage=local-lvm \
@@ -63,7 +63,7 @@ Step 2: Finalize template
 After Talos install is complete and VM is powered off:
 
 ```bash
-ansible-playbook -i ansible/inventory/proxmox/hosts.ini ansible/playbooks/prepare-template.yml \
+ansible-playbook -i ansible/inventory/prepare-template.ini ansible/playbooks/prepare-template.yml \
   -e talos_version=1.12.4 \
   -e talos_template_vmid=9000 \
   -e finalize_template=true
