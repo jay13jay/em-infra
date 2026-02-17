@@ -20,7 +20,7 @@ Use this template for each implementation task doc (one task = one file).
 - Docs index: [docs/README.md](../../README.md)
 - Architecture contract: [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
 - Roadmap: [docs/planning/infra-roadmap-single-host-k3s-dev.md](../../planning/infra-roadmap-single-host-k3s-dev.md)
-- Phase tracker: [docs/implementation/phase-1-implementation-tracker.md](../phase-1-implementation-tracker.md)
+- Phase tracker: [docs/implementation/phase-1/phase-1-implementation-tracker.md](../phase-1/phase-1-implementation-tracker.md)
 
 ---
 

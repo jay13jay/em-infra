@@ -49,9 +49,12 @@ terraform/
 ## Outputs
 The `k3s-dev` environment outputs remain available for orchestration and diagnostics.
 Key outputs include:
-- `control_plane_ips`
-- `worker_ips`
-- `gpu_worker_ips`
+- `talos_bootstrap_contract`
+- `talos_control_plane_endpoints`
+- `talos_node_ip_map`
+- `talos_node_vmid_map`
+
+Legacy outputs (`control_plane_ips`, `worker_ips`, `gpu_worker_ips`, and related VMID/BDF outputs) remain for compatibility but are deprecated in favor of the `talos_*` contract.
 
 For Talos workflows, these outputs are not the canonical post-boot source of cluster state.
 Use `talosctl` to retrieve node membership and cluster access details after bootstrap.

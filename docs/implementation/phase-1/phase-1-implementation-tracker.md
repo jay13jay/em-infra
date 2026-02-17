@@ -9,9 +9,9 @@
 
 ## Navigation
 
-- Docs index: [docs/README.md](../README.md)
-- Canonical architecture contract: [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
-- MVP roadmap: [docs/planning/infra-roadmap-single-host-k3s-dev.md](../planning/infra-roadmap-single-host-k3s-dev.md)
+- Docs index: [docs/README.md](../../README.md)
+- Canonical architecture contract: [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
+- MVP roadmap: [docs/planning/infra-roadmap-single-host-k3s-dev.md](../../planning/infra-roadmap-single-host-k3s-dev.md)
 
 ---
 
@@ -19,7 +19,7 @@
 
 Align repository docs and baseline automation contracts to the Talos-first architecture so implementation can proceed without ownership ambiguity.
 
-If any task below conflicts with the architecture document, [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../contracts/EM-Infra-Talos-Proxmox-Architecture.md) is canonical.
+If any task below conflicts with the architecture document, [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../../contracts/EM-Infra-Talos-Proxmox-Architecture.md) is canonical.
 
 ---
 
@@ -45,10 +45,10 @@ If any task below conflicts with the architecture document, [docs/contracts/EM-I
 
 ### Task documents
 
-- P1-T1: [docs/implementation/phase-1-task-1-docs-cross-link-alignment.md](./phase-1-task-1-docs-cross-link-alignment.md)
-- P1-T2: [docs/implementation/phase-1-task-2-dev-inventory-intent-files.md](./phase-1-task-2-dev-inventory-intent-files.md)
-- P1-T3: [docs/implementation/phase-1-task-3-terraform-provider-version-reconciliation.md](./phase-1-task-3-terraform-provider-version-reconciliation.md)
-- P1-T4: [docs/implementation/phase-1-task-4-terraform-docs-talos-provisioning-intent.md](./phase-1-task-4-terraform-docs-talos-provisioning-intent.md)
+- P1-T1: [docs/implementation/phase-1/phase-1-task-1-docs-cross-link-alignment.md](./phase-1-task-1-docs-cross-link-alignment.md)
+- P1-T2: [docs/implementation/phase-1/phase-1-task-2-dev-inventory-intent-files.md](./phase-1-task-2-dev-inventory-intent-files.md)
+- P1-T3: [docs/implementation/phase-1/phase-1-task-3-terraform-provider-version-reconciliation.md](./phase-1-task-3-terraform-provider-version-reconciliation.md)
+- P1-T4: [docs/implementation/phase-1/phase-1-task-4-terraform-docs-talos-provisioning-intent.md](./phase-1-task-4-terraform-docs-talos-provisioning-intent.md)
 
 ## 1) Docs & architecture cross-link alignment
 

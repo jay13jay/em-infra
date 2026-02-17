@@ -12,7 +12,7 @@
 - Docs index: [docs/README.md](../README.md)
 - Roadmap (execution sequencing): [docs/planning/infra-roadmap-single-host-k3s-dev.md](./infra-roadmap-single-host-k3s-dev.md)
 - Target architecture (technical contract): [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
-- Phase 1 implementation tracker: [docs/implementation/phase-1-implementation-tracker.md](../implementation/phase-1-implementation-tracker.md)
+- Phase 1 implementation tracker: [docs/implementation/phase-1/phase-1-implementation-tracker.md](../implementation/phase-1/phase-1-implementation-tracker.md)
 
 ---
 
@@ -94,19 +94,19 @@ Make docs and automation contracts match a Talos-first implementation path.
 
 ### Tasks
 
-- [ ] Add/validate canonical architecture cross-links in root + infra docs
-- [ ] Define initial inventory intent files for dev (`cluster.yaml`, `nodes.yaml`)
-- [ ] Reconcile provider version pinning in:
+- [x] Add/validate canonical architecture cross-links in root + infra docs
+- [x] Define initial inventory intent files for dev (`cluster.yaml`, `nodes.yaml`)
+- [x] Reconcile provider version pinning in:
   - `terraform/providers.tf`
   - `terraform/environments/k3s-dev/providers.tf`
-- [ ] Update Terraform docs to reflect Talos-oriented provisioning behavior:
+- [x] Update Terraform docs to reflect Talos-oriented provisioning behavior:
   - `terraform/README.md`
   - `terraform/environments/k3s-dev/README.md` (if needed)
 
 ### Gate: Phase 1 completion
 
-- [ ] Architecture and roadmap docs have no contradictory tasking
-- [ ] `terraform -chdir=terraform/environments/k3s-dev validate` passes
+- [x] Architecture and roadmap docs have no contradictory tasking
+- [x] `terraform -chdir=terraform/environments/k3s-dev validate` passes
 
 ---
 
@@ -306,11 +306,11 @@ kubectl get nodes -o wide
 
 ## Implementation Tracker
 
-### Immediate next actions (kickoff)
+### Immediate next actions (Phase 2 kickoff)
 
-- [ ] Create initial dev inventory intent files (`cluster.yaml`, `nodes.yaml`)
-- [ ] Align Terraform provider version constraints
-- [ ] Update Terraform README to match Talos-target repository state
-- [ ] Add top-level orchestrator script skeleton
-- [ ] Add validation checklist section to root README
+- [ ] Execute P2-T1: minimum `terraform.tfvars` input contract documentation
+- [ ] Execute P2-T2: variable validation hardening in Terraform
+- [ ] Execute P2-T3: output contract definition for Talos bootstrap handoff
+- [ ] Execute P2-T4: local-state backup/restore runbook updates
+- [ ] Execute P2-T5: idempotency evidence run (`plan/apply/plan`)
 

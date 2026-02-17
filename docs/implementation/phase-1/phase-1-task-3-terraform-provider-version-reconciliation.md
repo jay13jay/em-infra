@@ -15,10 +15,10 @@
 
 ## Navigation
 
-- Docs index: [docs/README.md](../README.md)
-- Architecture contract: [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
-- Roadmap: [docs/planning/infra-roadmap-single-host-k3s-dev.md](../planning/infra-roadmap-single-host-k3s-dev.md)
-- Phase tracker: [docs/implementation/phase-1-implementation-tracker.md](./phase-1-implementation-tracker.md)
+- Docs index: [docs/README.md](../../README.md)
+- Architecture contract: [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
+- Roadmap: [docs/planning/infra-roadmap-single-host-k3s-dev.md](../../planning/infra-roadmap-single-host-k3s-dev.md)
+- Phase tracker: [docs/implementation/phase-1/phase-1-implementation-tracker.md](./phase-1-implementation-tracker.md)
 
 ---
 
@@ -47,8 +47,8 @@ Eliminate provider and Terraform version drift between root and `k3s-dev` enviro
 ## Inputs & Dependencies
 
 - Required docs:
-  - [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
-  - [docs/implementation/phase-1-implementation-tracker.md](./phase-1-implementation-tracker.md)
+  - [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
+  - [docs/implementation/phase-1/phase-1-implementation-tracker.md](./phase-1-implementation-tracker.md)
 - Required files:
   - [terraform/providers.tf](../../terraform/providers.tf)
   - [terraform/environments/k3s-dev/providers.tf](../../terraform/environments/k3s-dev/providers.tf)
@@ -126,6 +126,6 @@ Eliminate provider and Terraform version drift between root and `k3s-dev` enviro
 - Open questions:
   - Final provider version baseline to enforce repo-wide
 - What to attach in next AI context window:
-  - [docs/implementation/phase-1-task-3-terraform-provider-version-reconciliation.md](./phase-1-task-3-terraform-provider-version-reconciliation.md)
+  - [docs/implementation/phase-1/phase-1-task-3-terraform-provider-version-reconciliation.md](./phase-1-task-3-terraform-provider-version-reconciliation.md)
   - [terraform/providers.tf](../../terraform/providers.tf)
   - [terraform/environments/k3s-dev/providers.tf](../../terraform/environments/k3s-dev/providers.tf)

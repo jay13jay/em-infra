@@ -1,4 +1,94 @@
 {
+  "talos_control_plane_endpoints": {
+    "value": ["192.0.2.10"]
+  },
+  "talos_bootstrap_nodes": {
+    "value": {
+      "control_plane": [
+        {
+          "role": "control_plane",
+          "name": "k3s-dev-control-1",
+          "vmid": 102,
+          "ip": "192.0.2.10",
+          "node": "pve"
+        }
+      ],
+      "workers": [
+        {
+          "role": "worker",
+          "name": "k3s-dev-worker-1",
+          "vmid": 101,
+          "ip": "192.0.2.11",
+          "node": "pve"
+        },
+        {
+          "role": "worker",
+          "name": "k3s-dev-worker-2",
+          "vmid": 103,
+          "ip": "192.0.2.12",
+          "node": "pve"
+        }
+      ],
+      "gpu_workers": []
+    }
+  },
+  "talos_node_ip_map": {
+    "value": {
+      "k3s-dev-control-1": "192.0.2.10",
+      "k3s-dev-worker-1": "192.0.2.11",
+      "k3s-dev-worker-2": "192.0.2.12"
+    }
+  },
+  "talos_node_vmid_map": {
+    "value": {
+      "k3s-dev-control-1": 102,
+      "k3s-dev-worker-1": 101,
+      "k3s-dev-worker-2": 103
+    }
+  },
+  "talos_bootstrap_contract": {
+    "value": {
+      "control_plane_endpoints": ["192.0.2.10"],
+      "nodes_by_role": {
+        "control_plane": [
+          {
+            "role": "control_plane",
+            "name": "k3s-dev-control-1",
+            "vmid": 102,
+            "ip": "192.0.2.10",
+            "node": "pve"
+          }
+        ],
+        "workers": [
+          {
+            "role": "worker",
+            "name": "k3s-dev-worker-1",
+            "vmid": 101,
+            "ip": "192.0.2.11",
+            "node": "pve"
+          },
+          {
+            "role": "worker",
+            "name": "k3s-dev-worker-2",
+            "vmid": 103,
+            "ip": "192.0.2.12",
+            "node": "pve"
+          }
+        ],
+        "gpu_workers": []
+      },
+      "node_ip_map": {
+        "k3s-dev-control-1": "192.0.2.10",
+        "k3s-dev-worker-1": "192.0.2.11",
+        "k3s-dev-worker-2": "192.0.2.12"
+      },
+      "node_vmid_map": {
+        "k3s-dev-control-1": 102,
+        "k3s-dev-worker-1": 101,
+        "k3s-dev-worker-2": 103
+      }
+    }
+  },
   "control_plane_ips": {
     "value": ["192.0.2.10"]
   },
