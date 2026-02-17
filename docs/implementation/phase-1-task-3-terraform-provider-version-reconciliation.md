@@ -8,8 +8,8 @@
 - Phase: Phase 1 — Foundations & Contract Alignment
 - Title: Reconcile Terraform provider version constraints
 - Owner: Solo developer + AI assistants
-- Status: Not started
-- Last Updated: 2026-02-16
+- Status: Complete
+- Last Updated: 2026-02-17
 
 ---
 
@@ -61,8 +61,8 @@ Eliminate provider and Terraform version drift between root and `k3s-dev` enviro
 
 ## Target Files
 
-- [ ] terraform/providers.tf
-- [ ] terraform/environments/k3s-dev/providers.tf
+- [x] terraform/providers.tf
+- [x] terraform/environments/k3s-dev/providers.tf
 
 ---
 
@@ -93,10 +93,10 @@ Eliminate provider and Terraform version drift between root and `k3s-dev` enviro
 
 ## Acceptance Criteria
 
-- [ ] Provider constraints are aligned across root and `k3s-dev`
-- [ ] Terraform version constraint strategy is consistent
-- [ ] `terraform -chdir=terraform/environments/k3s-dev validate` passes
-- [ ] No architecture-boundary conflicts introduced
+- [x] Provider constraints are aligned across root and `k3s-dev`
+- [x] Terraform version constraint strategy is consistent
+- [x] `terraform -chdir=terraform/environments/k3s-dev validate` passes
+- [x] No architecture-boundary conflicts introduced
 
 ---
 
@@ -114,6 +114,9 @@ Eliminate provider and Terraform version drift between root and `k3s-dev` enviro
 | Date | Step | Change | Validation | Result | Notes |
 |---|---|---|---|---|---|
 | 2026-02-16 | Baseline | Task doc created for provider reconciliation | N/A | Complete | Awaiting implementation |
+| 2026-02-17 | Constraint audit | Compared provider declarations across root, `k3s-dev`, modules, and examples | Source review | Complete | No conflicting provider versions found |
+| 2026-02-17 | Constraint reconciliation | Added `required_version = ">= 1.3.0"` to `terraform/environments/k3s-dev/providers.tf` | `terraform -chdir=terraform/environments/k3s-dev init -input=false` | Complete | Core-version strategy now explicit and aligned |
+| 2026-02-17 | Validation | Verified environment config remains valid after reconciliation | `terraform -chdir=terraform/environments/k3s-dev validate` | Complete | `Success! The configuration is valid.` |
 
 ---
 

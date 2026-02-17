@@ -8,8 +8,8 @@
 - Phase: Phase 1 — Foundations & Contract Alignment
 - Title: Update Terraform documentation for Talos provisioning intent
 - Owner: Solo developer + AI assistants
-- Status: Not started
-- Last Updated: 2026-02-16
+- Status: Complete
+- Last Updated: 2026-02-17
 
 ---
 
@@ -40,6 +40,7 @@ Align Terraform documentation with architecture boundaries so operators understa
 
 - Changing Terraform code behavior
 - Writing Talos bootstrap implementation details
+- Implementing Talos machine-config generation or requiring generated machine-config artifacts
 
 ---
 
@@ -56,12 +57,14 @@ Align Terraform documentation with architecture boundaries so operators understa
 - Upstream tasks that must be complete first:
   - P1-T3 recommended (to keep documented constraints in sync)
 
+Dependency note: This is a documentation-alignment task. It references the Talos generation contract but does not require implementation of `talos-gen-config` or presence of generated `talos/generated/*` artifacts.
+
 ---
 
 ## Target Files
 
-- [ ] terraform/README.md
-- [ ] terraform/environments/k3s-dev/README.md
+- [x] terraform/README.md
+- [x] terraform/environments/k3s-dev/README.md
 
 ---
 
@@ -91,10 +94,10 @@ Align Terraform documentation with architecture boundaries so operators understa
 
 ## Acceptance Criteria
 
-- [ ] Root Terraform README reflects Talos-native ownership boundary
-- [ ] `k3s-dev` README contains accurate command paths
-- [ ] Local-state expectations are documented for MVP
-- [ ] No architecture-boundary conflicts introduced
+- [x] Root Terraform README reflects Talos-native ownership boundary
+- [x] `k3s-dev` README contains accurate command paths
+- [x] Local-state expectations are documented for MVP
+- [x] No architecture-boundary conflicts introduced
 
 ---
 
@@ -112,6 +115,8 @@ Align Terraform documentation with architecture boundaries so operators understa
 | Date | Step | Change | Validation | Result | Notes |
 |---|---|---|---|---|---|
 | 2026-02-16 | Baseline | Task doc created for Terraform docs alignment | N/A | Complete | Awaiting implementation |
+| 2026-02-17 | README alignment | Updated root and `k3s-dev` README ownership language, repository-real command paths, and MVP local-state guardrails | `grep -n "VM lifecycle\|Talos\|ownership" terraform/README.md terraform/environments/k3s-dev/README.md` | Complete | Boundary wording and Talos references verified |
+| 2026-02-17 | Validation | Confirmed environment configuration remains valid after docs update | `terraform -chdir=terraform/environments/k3s-dev validate` | Complete | `Success! The configuration is valid.` |
 
 ---
 

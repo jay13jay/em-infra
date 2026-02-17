@@ -8,8 +8,8 @@
 - Phase: Phase 1 — Foundations & Contract Alignment
 - Title: Define initial dev inventory intent files
 - Owner: Solo developer + AI assistants
-- Status: Not started
-- Last Updated: 2026-02-16
+- Status: Complete
+- Last Updated: 2026-02-17
 
 ---
 
@@ -24,7 +24,7 @@
 
 ## Objective
 
-Establish canonical inventory inputs for Talos config generation by defining `cluster.yaml` and `nodes.yaml` for single-host dev topology.
+Establish canonical inventory intent inputs that will be consumed by later Talos machine-config generation by defining `cluster.yaml` and `nodes.yaml` for single-host dev topology.
 
 ---
 
@@ -37,12 +37,14 @@ Establish canonical inventory inputs for Talos config generation by defining `cl
 - Include minimal fields for control plane, worker, and optional GPU worker representation
 - Document ownership expectation (inventory as source of truth)
 - Update `schema.json` only if required for immediate validation contract
+- Clarify sequencing: inventory intent is delivered in this task; Talos machine-config generation is validated in Phase 3
 
 ### Out of scope
 
 - Implementing full Talos machineconfig generation pipeline
 - Converting existing Ansible inventory flows
 - Defining HA or multi-host topologies
+- Producing `talos/generated/*` or `talos-machines.auto.tfvars.json` artifacts in this phase
 
 ---
 
@@ -63,9 +65,9 @@ Establish canonical inventory inputs for Talos config generation by defining `cl
 
 ## Target Files
 
-- [ ] inventory/dev/cluster.yaml
-- [ ] inventory/dev/nodes.yaml
-- [ ] schema.json (if validation contract update is needed)
+- [x] inventory/dev/cluster.yaml
+- [x] inventory/dev/nodes.yaml
+- [x] schema.json (validation contract present; no update required in this phase)
 
 ---
 
@@ -98,11 +100,11 @@ Establish canonical inventory inputs for Talos config generation by defining `cl
 
 ## Acceptance Criteria
 
-- [ ] `inventory/dev/cluster.yaml` exists with valid YAML syntax
-- [ ] `inventory/dev/nodes.yaml` exists with valid YAML syntax
-- [ ] Field names align with architecture examples
-- [ ] Model represents control plane + worker + optional GPU worker
-- [ ] No architecture-boundary conflicts introduced
+- [x] `inventory/dev/cluster.yaml` exists with valid YAML syntax
+- [x] `inventory/dev/nodes.yaml` exists with valid YAML syntax
+- [x] Field names align with architecture examples
+- [x] Model represents control plane + worker + optional GPU worker
+- [x] No architecture-boundary conflicts introduced
 
 ---
 
@@ -120,6 +122,9 @@ Establish canonical inventory inputs for Talos config generation by defining `cl
 | Date | Step | Change | Validation | Result | Notes |
 |---|---|---|---|---|---|
 | 2026-02-16 | Baseline | Task doc created for execution planning | N/A | Complete | Awaiting implementation |
+| 2026-02-17 | Inventory intent files | Confirmed canonical files exist with expected minimal dev topology fields and role model | `test -f inventory/dev/cluster.yaml && test -f inventory/dev/nodes.yaml` | Complete | Both files present |
+| 2026-02-17 | Role model validation | Verified control-plane, worker, and gpu-worker role representation in `nodes.yaml` | `grep -n "control-plane\|worker\|gpu" inventory/dev/nodes.yaml` | Complete | Role coverage present |
+| 2026-02-17 | Schema/basic validation | Validated inventory contract via repo validator script | `python3 scripts/validate_inventory.py` | Complete | `Validation: OK (basic checks)` |
 
 ---
 
@@ -127,9 +132,11 @@ Establish canonical inventory inputs for Talos config generation by defining `cl
 
 - Follow-up task(s): P1-T3 provider reconciliation
 - Open questions:
-  - Final canonical location for inventory intent (`inventory/dev/` vs `ansible/inventory/`)
+  - Talos machine-config generator implementation owner and insertion point in Phase 3 execution sequence
   - Whether `schema.json` validates YAML directly or generated JSON
 - What to attach in next AI context window:
   - [docs/implementation/phase-1-task-2-dev-inventory-intent-files.md](./phase-1-task-2-dev-inventory-intent-files.md)
   - [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
   - [docs/planning/infra-roadmap-single-host-k3s-dev.md](../planning/infra-roadmap-single-host-k3s-dev.md)
+
+Dependency note: This task defines canonical inventory intent only. Talos machine-config generation and related output artifacts are validated in roadmap Phase 3 (`talos-gen-config` workflow).

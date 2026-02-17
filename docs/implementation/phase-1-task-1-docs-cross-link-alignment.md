@@ -8,8 +8,8 @@
 - Phase: Phase 1 — Foundations & Contract Alignment
 - Title: Docs & architecture cross-link alignment
 - Owner: Solo developer + AI assistants
-- Status: In progress
-- Last Updated: 2026-02-16
+- Status: Complete
+- Last Updated: 2026-02-17
 
 ---
 
@@ -63,10 +63,10 @@ Ensure operator navigation is linear from root documentation to architecture and
 
 ## Target Files
 
-- [ ] README.md
-- [ ] docs/planning/infra-roadmap-single-host-k3s-dev.md
-- [ ] docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md
-- [ ] docs/README.md
+- [x] README.md
+- [x] docs/planning/infra-roadmap-single-host-k3s-dev.md
+- [x] docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md
+- [x] docs/README.md
 
 ---
 
@@ -96,10 +96,10 @@ Ensure operator navigation is linear from root documentation to architecture and
 
 ## Acceptance Criteria
 
-- [ ] Navigation path from root README to architecture + roadmap is explicit
-- [ ] Canonical docs index is linked by major docs
-- [ ] No contradictory ownership language remains
-- [ ] No architecture-boundary conflicts introduced
+- [x] Navigation path from root README to architecture + roadmap is explicit
+- [x] Canonical docs index is linked by major docs
+- [x] No contradictory ownership language remains
+- [x] No architecture-boundary conflicts introduced
 
 ---
 
@@ -115,6 +115,8 @@ Ensure operator navigation is linear from root documentation to architecture and
 | Date | Step | Change | Validation | Result | Notes |
 |---|---|---|---|---|---|
 | 2026-02-16 | Baseline | Task doc created and aligned to phase tracker scope | N/A | Complete | Tracker indicates partial completion already exists |
+| 2026-02-17 | Link/path audit | Verified canonical cross-links across root/docs/contract/roadmap docs | `grep -RIn "docs/README.md\|EM-Infra-Talos-Proxmox-Architecture.md\|infra-roadmap-single-host-k3s-dev.md" README.md docs` | Complete | Required navigation links present |
+| 2026-02-17 | Ownership-boundary audit | Verified Terraform/Talos ownership wording consistency and no node-OS ownership conflicts | `grep -RIn "Terraform.*\(OS\|node state\|kubernetes\)" README.md docs` | Complete | Matches architecture boundary language |
 
 ---
 

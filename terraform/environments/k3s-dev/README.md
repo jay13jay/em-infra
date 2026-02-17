@@ -34,6 +34,22 @@ terraform -chdir=terraform/environments/k3s-dev apply -var-file=terraform.tfvars
 terraform -chdir=terraform/environments/k3s-dev output
 ```
 
+MVP local state guardrails:
+
+- State is local: `terraform/environments/k3s-dev/terraform.tfstate`.
+- Before major changes, create a timestamped backup from repo root:
+
+```bash
+cp terraform/environments/k3s-dev/terraform.tfstate terraform/environments/k3s-dev/terraform.tfstate.backup.$(date +%Y%m%d-%H%M%S)
+```
+
+- Keep `terraform.tfvars` and state files out of version control.
+- Run config validation before planning/apply:
+
+```bash
+terraform -chdir=terraform/environments/k3s-dev validate
+```
+
 Scaling GPU workers:
 
 - Edit `gpu_worker_pci_bdfs` in your tfvars to add or remove PCI BDF strings, then `terraform apply`.

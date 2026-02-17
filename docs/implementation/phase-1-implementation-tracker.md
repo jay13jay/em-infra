@@ -2,8 +2,8 @@
 
 **Owner:** Solo developer + AI assistants  
 **Phase Window:** Days 1-7 (MVP roadmap)  
-**Status:** Ready to execute  
-**Last Updated:** 2026-02-16
+**Status:** Complete  
+**Last Updated:** 2026-02-17
 
 ---
 
@@ -77,7 +77,7 @@ If any task below conflicts with the architecture document, [docs/contracts/EM-I
 
 ## 2) Define initial dev inventory intent files
 
-**Goal:** Establish canonical inventory inputs for Talos config generation.
+**Goal:** Establish canonical inventory intent inputs for later Talos config generation.
 
 **Planned changes**
 
@@ -168,6 +168,12 @@ Use this section as implementation progresses.
 |---|---|---|---|---|---|
 | 2026-02-16 | Tracker creation | Added Phase 1 implementation tracking doc | N/A | Complete | Initial baseline |
 | 2026-02-16 | Task 1 (partial) | Added docs index and linked root/architecture/roadmap navigation | Link review | Complete | Hierarchy v1 established |
+| 2026-02-17 | Task 1 | Completed cross-link and ownership-boundary validation across root/docs/contract/roadmap docs | `grep -RIn "docs/README.md\|EM-Infra-Talos-Proxmox-Architecture.md\|infra-roadmap-single-host-k3s-dev.md" README.md docs` and `grep -RIn "Terraform.*\(OS\|node state\|kubernetes\)" README.md docs` | Complete | Canonical navigation and ownership wording verified |
+| 2026-02-17 | Task 2 | Confirmed canonical inventory intent files and role model for dev topology | `test -f inventory/dev/cluster.yaml && test -f inventory/dev/nodes.yaml`, `grep -n "control-plane\|worker\|gpu" inventory/dev/nodes.yaml`, `python3 scripts/validate_inventory.py` | Complete | Inventory contract validated |
+| 2026-02-17 | Task 3 | Reconciled Terraform core constraint strategy by adding `required_version = ">= 1.3.0"` to `k3s-dev` providers config | `terraform -chdir=terraform/environments/k3s-dev init -input=false && terraform -chdir=terraform/environments/k3s-dev validate` | Complete | Init and validate both succeeded |
+| 2026-02-17 | Task 4 | Updated Terraform READMEs to align Talos ownership wording, repository-real command paths, and MVP local-state guardrails | `grep -n "VM lifecycle\|Talos\|ownership" terraform/README.md terraform/environments/k3s-dev/README.md` | Complete | Boundary language and command path coverage verified |
+| 2026-02-17 | Task 4 validation | Confirmed Terraform environment remains valid after documentation updates | `terraform -chdir=terraform/environments/k3s-dev validate` | Complete | `Success! The configuration is valid.` |
+| 2026-02-17 | Phase 1 gate | Re-ran gate commands for closeout evidence | `terraform -chdir=terraform/environments/k3s-dev init -input=false && terraform -chdir=terraform/environments/k3s-dev validate` | Complete | Gate commands successful |
 
 ---
 
@@ -183,7 +189,6 @@ Use this section as implementation progresses.
 
 ### Open questions
 
-- [ ] Final canonical location for inventory intent (`inventory/dev/` vs existing `ansible/inventory/` structure)
 - [ ] Whether `schema.json` should validate inventory YAML directly or generated intermediate JSON
 - [ ] Final provider version pin baseline to enforce across root + environment files
 
@@ -191,9 +196,9 @@ Use this section as implementation progresses.
 
 ## Phase 1 Completion Checklist
 
-- [ ] Task 1 complete
-- [ ] Task 2 complete
-- [ ] Task 3 complete
-- [ ] Task 4 complete
-- [ ] Validation gate passed
-- [ ] Evidence log updated with command output summaries
+- [x] Task 1 complete
+- [x] Task 2 complete
+- [x] Task 3 complete
+- [x] Task 4 complete
+- [x] Validation gate passed
+- [x] Evidence log updated with command output summaries

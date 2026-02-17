@@ -20,27 +20,31 @@ terraform/
 
 ## Quick Start (k3s-dev)
 
-1.  **Navigate to the environment:**
+1.  **From repository root, initialize the environment:**
     ```bash
-    cd environments/k3s-dev
+    terraform -chdir=terraform/environments/k3s-dev init
     ```
 
-2.  **Initialize Terraform:**
+2.  **Configure Variables:**
+    Copy `terraform/environments/k3s-dev/terraform.tfvars.example` to `terraform/environments/k3s-dev/terraform.tfvars` and edit it with your Proxmox credentials and settings.
     ```bash
-    terraform init
+    cp terraform/environments/k3s-dev/terraform.tfvars.example terraform/environments/k3s-dev/terraform.tfvars
     ```
 
-3.  **Configure Variables:**
-    Copy `terraform.tfvars.example` to `terraform.tfvars` and edit it with your Proxmox credentials and settings.
+3.  **Plan and Apply:**
     ```bash
-    cp terraform.tfvars.example terraform.tfvars
+    terraform -chdir=terraform/environments/k3s-dev plan -var-file=terraform.tfvars
+    terraform -chdir=terraform/environments/k3s-dev apply -var-file=terraform.tfvars
     ```
 
-4.  **Plan and Apply:**
-    ```bash
-    terraform plan
-    terraform apply
-    ```
+## Local State Expectations (MVP)
+
+- State is local to `terraform/environments/k3s-dev/terraform.tfstate`.
+- Keep state backups before major changes:
+  ```bash
+  cp terraform/environments/k3s-dev/terraform.tfstate terraform/environments/k3s-dev/terraform.tfstate.backup.$(date +%Y%m%d-%H%M%S)
+  ```
+- Treat `terraform.tfvars` and state files as sensitive and do not commit them.
 
 ## Outputs
 The `k3s-dev` environment outputs remain available for orchestration and diagnostics.
@@ -75,5 +79,5 @@ talosctl --talosconfig <path-to-talosconfig> --endpoints <control-plane-ip> kube
 ```
 
 ## Requirements
-- Terraform >= 1.0
-- Proxmox Provider (Telmate/proxmox) ~> 3.0.2-rc7
+- Terraform >= 1.3.0
+- Proxmox Provider (Telmate/proxmox) 3.0.2-rc07
