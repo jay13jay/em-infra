@@ -1,0 +1,14 @@
+cluster_name: em-dev-single
+environment: dev
+talos_version: v1.3.0
+kubernetes_version: v1.28.0
+network:
+  pod_cidr: 10.244.0.0/16
+  service_cidr: 10.96.0.0/12
+proxmox:
+  datacenter: pve
+  storage: local-lvm
+  template_name: ubuntu-24-talos-template
+
+# Minimal cluster-level intent for dev environment.
+# Keep fields intentionally small to avoid coupling with generator internals.

@@ -1,85 +1,83 @@
-# Terraform — Proxmox foundation (local/homelab)
+# Terraform — Proxmox Infrastructure
 
-Short and focused instructions for local-only use. This workspace contains only provider configuration — no VMs are defined yet.
+This directory contains the Terraform configuration for the Proxmox infrastructure.
+It is organized into environments and modules.
 
-## Quick facts ✅
-- Provider: `Telmate/proxmox` (pinned in `providers.tf`).
-- Intended usage: **local single-operator homelab** (you). No CI required.
-- Secrets: keep out of VCS — use environment variables or a secrets manager.
-- TLS: `pm_tls_insecure = true` is explicit and acceptable for this homelab setup.
+Terraform manages VM lifecycle only — it creates and configures virtual machines and host-level resources; Talos is solely responsible for node OS configuration and runtime state (bootstrapping, OS configuration, and kubelet/runtime lifecycle).
 
----
+## Structure
 
-## Files of interest
-- `providers.tf` — provider + required_providers/version constraints
-- `variables.tf` — sensitive variables (default to `null`) — prefer env vars
-- `terraform.tfvars.example` — example (DO NOT commit real secrets)
-- `.gitignore` — ignores state and `terraform.tfvars`
+```
+terraform/
+├── environments/       # Environment-specific configurations (state roots)
+│   └── k3s-dev/        # The main development environment
+├── modules/            # Reusable Terraform modules
+│   ├── cluster/
+│   ├── gpu_worker/
+│   └── vm_ubuntu22/
+└── providers.tf        # Root provider configuration (reference)
+```
 
----
+## Quick Start (k3s-dev)
 
-## Quick start (Git Bash) ⚡
-1. Create a Proxmox API token (run on your Proxmox host or via API):
+1.  **From repository root, initialize the environment:**
+    ```bash
+    terraform -chdir=terraform/environments/k3s-dev init
+    ```
 
-   pveum user token add terraform-prov@pve mytoken
+2.  **Configure Variables:**
+    Copy `terraform/environments/k3s-dev/terraform.tfvars.example` to `terraform/environments/k3s-dev/terraform.tfvars` and edit it with your Proxmox credentials and settings.
+    ```bash
+    cp terraform/environments/k3s-dev/terraform.tfvars.example terraform/environments/k3s-dev/terraform.tfvars
+    ```
 
-   Note: the token id format is `user@realm!tokenname` and the secret (UUID)
-   is shown only at creation.
+3.  **Plan and Apply:**
+    ```bash
+    terraform -chdir=terraform/environments/k3s-dev plan -var-file=terraform.tfvars
+    terraform -chdir=terraform/environments/k3s-dev apply -var-file=terraform.tfvars
+    ```
 
-2. Export credentials to the environment (Git Bash):
+## Local State Expectations (MVP)
 
-   export PM_API_URL='https://proxmox.local:8006/api2/json'
-   export PM_API_TOKEN_ID='terraform-prov@pve!mytoken'
-   export PM_API_TOKEN_SECRET='00000000-0000-0000-0000-000000000000'
+- State is local to `terraform/environments/k3s-dev/terraform.tfstate`.
+- Keep state backups before major changes:
+  ```bash
+  cp terraform/environments/k3s-dev/terraform.tfstate terraform/environments/k3s-dev/terraform.tfstate.backup.$(date +%Y%m%d-%H%M%S)
+  ```
+- Treat `terraform.tfvars` and state files as sensitive and do not commit them.
 
-   Tip: you can add the three `export` lines to a local `env.sh` file and `source env.sh` when working.
+## Outputs
+The `k3s-dev` environment outputs remain available for orchestration and diagnostics.
+Key outputs include:
+- `control_plane_ips`
+- `worker_ips`
+- `gpu_worker_ips`
 
-3. Initialize and validate the configuration:
+For Talos workflows, these outputs are not the canonical post-boot source of cluster state.
+Use `talosctl` to retrieve node membership and cluster access details after bootstrap.
 
-   terraform -chdir=terraform init
-   terraform -chdir=terraform validate
+## Talos Node Discovery (Preferred)
 
-4. Create a plan (safe, read-only):
+Talos does not support `qemu-guest-agent`, so workflows should not rely on Terraform dynamic inventory
+that composes host IPs from guest-agent fields.
 
-   terraform -chdir=terraform plan -out=terraform/tfplan
+Recommended approach:
 
----
+1. Define predictable node addressing in your cluster intent (static IPs or DHCP reservations).
+2. Provision VMs with Terraform.
+3. Bootstrap Talos.
+4. Retrieve live node/cluster information with `talosctl`.
 
-## Security & best-practices (short) 🔐
-- Never commit `terraform.tfvars` with secrets. `.gitignore` already excludes it.
-- Prefer `PM_API_*` environment variables or a secret manager (Vault, etc.).
-- API token is recommended over username/password.
-- For production: set `pm_tls_insecure = false` and use a proper CA-signed certificate.
+Example:
 
----
+```bash
+# Show Talos member view after bootstrap
+talosctl --talosconfig <path-to-talosconfig> --endpoints <control-plane-ip> --nodes <control-plane-ip> get members
 
-## Troubleshooting (common issues) ⚠️
-- "authentication failed": verify `PM_API_TOKEN_ID` includes the `!tokenname` suffix and the secret is correct.
-- "certificate verify failed": this config intentionally sets `pm_tls_insecure = true`. To fix properly, install a CA-signed cert on Proxmox and set `pm_tls_insecure = false`.
-- "resource not found / no resources": expected — provider is configured but no VM resources are defined yet.
+# Retrieve kubeconfig from Talos
+talosctl --talosconfig <path-to-talosconfig> --endpoints <control-plane-ip> kubeconfig ./kubeconfig
+```
 
----
-
-## Where to add resources next
-- Add environment-level resources under `terraform/` (or create `terraform/modules/` for reusable VM modules).
-
-## Next suggestions (optional)
-- If you want credentials injected from Vault or a Windows secret store, I can add an example.
-
----
-
-## New: `vm_ubuntu22` module (Ubuntu 22.04)
-A reusable, control-plane–suitable VM module has been added at `terraform/modules/vm_ubuntu22/` with a runnable example in `terraform/examples/ubuntu/`.
-
-Quick notes:
-- Primary flow: **clone** a cloud-init–capable Ubuntu 22.04 template (must include cloud-init + qemu-guest-agent).
-- Defaults assume DHCP, `vmbr0` and `local-lvm` (adjust via module inputs).
-- Example usage: `terraform/examples/ubuntu/main.tf` + `terraform/examples/ubuntu/terraform.tfvars.example`.
-
-Run the example locally:
-
-1. export the `PM_API_*` environment variables (see above)
-2. terraform -chdir=terraform/examples/ubuntu init
-3. terraform -chdir=terraform/examples/ubuntu plan -var-file=terraform.tfvars
-
-The module README contains prerequisites and troubleshooting tips.
+## Requirements
+- Terraform >= 1.3.0
+- Proxmox Provider (Telmate/proxmox) 3.0.2-rc07
