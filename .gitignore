@@ -36,4 +36,6 @@ ansible/.keys/
 
 # Local ISO and image downloads used for building templates
 terraform/files/isos/
-
+tmp/*
+.venv*
+ansible/inventory/*

@@ -29,5 +29,5 @@ cluster_cidr = "10.42.0.0/16"  # pod network
 service_cidr = "10.43.0.0/16"  # service network
 # cluster_network_cidr = "192.168.1.0/24"  # optional: node network CIDR for validation
 
-disk_pool = "local-lvm"
+disk_pool = "tank"
 network_bridge = "vmbr0"
