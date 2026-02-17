@@ -20,7 +20,7 @@ resource "proxmox_vm_qemu" "this" {
     type    = "disk"
     storage = var.disk_pool
     slot    = "scsi0"
-    size    = format("%dG", var.disk_gb)
+    size    = "${var.disk_gb}G"
   }
 
   network {
@@ -49,11 +49,7 @@ resource "proxmox_vm_qemu" "this" {
   boot = "order=scsi0"
   onboot = var.onboot
 
-  // Lifecycle: prevent recreation on minor config changes
-  lifecycle {
-    ignore_changes = [
-      # Talos may update its own network config at runtime
-      network,
-    ]
-  }
+  // Note: Talos manages its own network state via machine config
+  // If network drift is detected, it likely indicates a machine config change
+  // applied outside of Terraform, which is expected in the Talos workflow
 }
