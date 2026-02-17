@@ -148,6 +148,7 @@ Document and standardize the Proxmox host-prep phase using `proxmox-ansible` so 
 | 2026-02-17 | Template autoinstall support | Added optional Talos autoinstall kernel args to prepare-template playbook (config URL, disk, hostname) with cleanup on finalize | N/A | Complete | Enables unattended install before template conversion |
 | 2026-02-17 | Template finalized | Ran prepare-template with autoinstall (config URL http://10.0.0.85:8000/init.yaml), then finalized VMID 9000 to template talos-v1.12.4-base on storage tank; removed autoinstall args | ansible-playbook prepare-template.yml (finalize_template=true) | Complete | Template ready for Terraform |
 | 2026-02-17 | Terraform plan | Executed plan with containerized terraform:1.14.5 using talos-v1.12.4-base template and k3s-dev tfvars | `docker run --rm -v "$PWD:/workspace" -w /workspace/terraform/environments/k3s-dev hashicorp/terraform:1.14.5 plan -var-file=terraform.tfvars` | Complete | Plan shows 2 VMs (control + worker) to create; outputs populate after apply |
+| 2026-02-17 | Terraform apply | Attempted apply with containerized terraform:1.14.5; Proxmox reported missing template `talos-v1.12.4-base` | `docker run --rm -v "$PWD:/workspace" -w /workspace/terraform/environments/k3s-dev hashicorp/terraform:1.14.5 apply -var-file=terraform.tfvars -auto-approve` | Failed | Recreate/verify template VMID 9000 or adjust tfvars template name, then rerun |
 
 ---
 
