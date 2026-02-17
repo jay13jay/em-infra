@@ -15,10 +15,10 @@
 
 ## Navigation
 
-- Docs index: [docs/README.md](../README.md)
-- Architecture contract: [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
-- Roadmap: [docs/planning/infra-roadmap-single-host-k3s-dev.md](../planning/infra-roadmap-single-host-k3s-dev.md)
-- Phase tracker: [docs/implementation/phase-1-implementation-tracker.md](./phase-1-implementation-tracker.md)
+- Docs index: [docs/README.md](../../README.md)
+- Architecture contract: [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
+- Roadmap: [docs/planning/infra-roadmap-single-host-k3s-dev.md](../../planning/infra-roadmap-single-host-k3s-dev.md)
+- Phase tracker: [docs/implementation/phase-1/phase-1-implementation-tracker.md](./phase-1-implementation-tracker.md)
 
 ---
 
@@ -47,8 +47,8 @@ Align Terraform documentation with architecture boundaries so operators understa
 ## Inputs & Dependencies
 
 - Required docs:
-  - [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
-  - [docs/planning/infra-roadmap-single-host-k3s-dev.md](../planning/infra-roadmap-single-host-k3s-dev.md)
+  - [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
+  - [docs/planning/infra-roadmap-single-host-k3s-dev.md](../../planning/infra-roadmap-single-host-k3s-dev.md)
 - Required files:
   - [terraform/README.md](../../terraform/README.md)
   - [terraform/environments/k3s-dev/README.md](../../terraform/environments/k3s-dev/README.md)
@@ -125,7 +125,7 @@ Dependency note: This is a documentation-alignment task. It references the Talos
 - Follow-up task(s): Phase 1 validation gate
 - Open questions: None blocking
 - What to attach in next AI context window:
-  - [docs/implementation/phase-1-task-4-terraform-docs-talos-provisioning-intent.md](./phase-1-task-4-terraform-docs-talos-provisioning-intent.md)
-  - [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
+  - [docs/implementation/phase-1/phase-1-task-4-terraform-docs-talos-provisioning-intent.md](./phase-1-task-4-terraform-docs-talos-provisioning-intent.md)
+  - [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
   - [terraform/README.md](../../terraform/README.md)
   - [terraform/environments/k3s-dev/README.md](../../terraform/environments/k3s-dev/README.md)

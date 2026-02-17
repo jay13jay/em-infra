@@ -10,12 +10,18 @@ Use this page first, then follow links by intent (architecture, planning, implem
 
 - Architecture contract: [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](./contracts/EM-Infra-Talos-Proxmox-Architecture.md)
 - MVP roadmap: [docs/planning/infra-roadmap-single-host-k3s-dev.md](./planning/infra-roadmap-single-host-k3s-dev.md)
-- Active implementation tracker: [docs/implementation/phase-1-implementation-tracker.md](./implementation/phase-1-implementation-tracker.md)
-- Phase 1 task docs:
-   - [docs/implementation/phase-1-task-1-docs-cross-link-alignment.md](./implementation/phase-1-task-1-docs-cross-link-alignment.md)
-   - [docs/implementation/phase-1-task-2-dev-inventory-intent-files.md](./implementation/phase-1-task-2-dev-inventory-intent-files.md)
-   - [docs/implementation/phase-1-task-3-terraform-provider-version-reconciliation.md](./implementation/phase-1-task-3-terraform-provider-version-reconciliation.md)
-   - [docs/implementation/phase-1-task-4-terraform-docs-talos-provisioning-intent.md](./implementation/phase-1-task-4-terraform-docs-talos-provisioning-intent.md)
+- Active implementation tracker: [docs/implementation/phase-2/phase-2-implementation-tracker.md](./implementation/phase-2/phase-2-implementation-tracker.md)
+- Phase 2 task docs:
+   - [docs/implementation/phase-2/phase-2-task-1-minimum-input-contract.md](./implementation/phase-2/phase-2-task-1-minimum-input-contract.md)
+   - [docs/implementation/phase-2/phase-2-task-2-variable-validation-hardening.md](./implementation/phase-2/phase-2-task-2-variable-validation-hardening.md)
+   - [docs/implementation/phase-2/phase-2-task-3-output-contract-for-bootstrap.md](./implementation/phase-2/phase-2-task-3-output-contract-for-bootstrap.md)
+   - [docs/implementation/phase-2/phase-2-task-4-local-state-operations.md](./implementation/phase-2/phase-2-task-4-local-state-operations.md)
+   - [docs/implementation/phase-2/phase-2-task-5-idempotency-verification.md](./implementation/phase-2/phase-2-task-5-idempotency-verification.md)
+- Phase 1 task docs (completed):
+   - [docs/implementation/phase-1/phase-1-task-1-docs-cross-link-alignment.md](./implementation/phase-1/phase-1-task-1-docs-cross-link-alignment.md)
+   - [docs/implementation/phase-1/phase-1-task-2-dev-inventory-intent-files.md](./implementation/phase-1/phase-1-task-2-dev-inventory-intent-files.md)
+   - [docs/implementation/phase-1/phase-1-task-3-terraform-provider-version-reconciliation.md](./implementation/phase-1/phase-1-task-3-terraform-provider-version-reconciliation.md)
+   - [docs/implementation/phase-1/phase-1-task-4-terraform-docs-talos-provisioning-intent.md](./implementation/phase-1/phase-1-task-4-terraform-docs-talos-provisioning-intent.md)
 
 ---
 
@@ -30,7 +36,7 @@ Use this page first, then follow links by intent (architecture, planning, implem
 
 - Architecture decisions and boundaries: [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](./contracts/EM-Infra-Talos-Proxmox-Architecture.md)
 - Delivery sequencing and gates: [docs/planning/infra-roadmap-single-host-k3s-dev.md](./planning/infra-roadmap-single-host-k3s-dev.md)
-- Current execution checklist: [docs/implementation/phase-1-implementation-tracker.md](./implementation/phase-1-implementation-tracker.md)
+- Current execution checklist: [docs/implementation/phase-2/phase-2-implementation-tracker.md](./implementation/phase-2/phase-2-implementation-tracker.md)
 - Task document template: [docs/implementation/templates/task-doc-template.md](./implementation/templates/task-doc-template.md)
 
 ---
@@ -42,7 +48,7 @@ Use this sequence for implementation work to keep context focused and reproducib
 1. Normalize canonical docs for the session:
    - architecture: [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](./contracts/EM-Infra-Talos-Proxmox-Architecture.md)
    - roadmap: [docs/planning/infra-roadmap-single-host-k3s-dev.md](./planning/infra-roadmap-single-host-k3s-dev.md)
-   - active tracker: [docs/implementation/phase-1-implementation-tracker.md](./implementation/phase-1-implementation-tracker.md)
+   - active tracker: [docs/implementation/phase-2/phase-2-implementation-tracker.md](./implementation/phase-2/phase-2-implementation-tracker.md)
 2. Generate one task doc per tracker task using [docs/implementation/templates/task-doc-template.md](./implementation/templates/task-doc-template.md).
 3. Attach all task docs + architecture + roadmap, then ask the agent to review for conflicts, ownership boundary violations, and sequencing gaps.
 4. Apply review corrections to task docs.

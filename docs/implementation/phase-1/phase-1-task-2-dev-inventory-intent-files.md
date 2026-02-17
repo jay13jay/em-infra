@@ -15,10 +15,10 @@
 
 ## Navigation
 
-- Docs index: [docs/README.md](../README.md)
-- Architecture contract: [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
-- Roadmap: [docs/planning/infra-roadmap-single-host-k3s-dev.md](../planning/infra-roadmap-single-host-k3s-dev.md)
-- Phase tracker: [docs/implementation/phase-1-implementation-tracker.md](./phase-1-implementation-tracker.md)
+- Docs index: [docs/README.md](../../README.md)
+- Architecture contract: [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
+- Roadmap: [docs/planning/infra-roadmap-single-host-k3s-dev.md](../../planning/infra-roadmap-single-host-k3s-dev.md)
+- Phase tracker: [docs/implementation/phase-1/phase-1-implementation-tracker.md](./phase-1-implementation-tracker.md)
 
 ---
 
@@ -51,9 +51,9 @@ Establish canonical inventory intent inputs that will be consumed by later Talos
 ## Inputs & Dependencies
 
 - Required docs:
-  - [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
-  - [docs/planning/infra-roadmap-single-host-k3s-dev.md](../planning/infra-roadmap-single-host-k3s-dev.md)
-  - [docs/implementation/phase-1-implementation-tracker.md](./phase-1-implementation-tracker.md)
+  - [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
+  - [docs/planning/infra-roadmap-single-host-k3s-dev.md](../../planning/infra-roadmap-single-host-k3s-dev.md)
+  - [docs/implementation/phase-1/phase-1-implementation-tracker.md](./phase-1-implementation-tracker.md)
 - Required files:
   - [schema.json](../../schema.json)
 - Required tools/commands:
@@ -88,7 +88,7 @@ Establish canonical inventory intent inputs that will be consumed by later Talos
 
 - `test -f inventory/dev/cluster.yaml && test -f inventory/dev/nodes.yaml`
 - `grep -n "control-plane\|worker\|gpu" inventory/dev/nodes.yaml`
-- `grep -n "source of truth\|inventory" docs/implementation/phase-1-implementation-tracker.md || true`
+- `grep -n "source of truth\|inventory" docs/implementation/phase-1/phase-1-implementation-tracker.md || true`
 
 ### Expected results
 
@@ -135,8 +135,8 @@ Establish canonical inventory intent inputs that will be consumed by later Talos
   - Talos machine-config generator implementation owner and insertion point in Phase 3 execution sequence
   - Whether `schema.json` validates YAML directly or generated JSON
 - What to attach in next AI context window:
-  - [docs/implementation/phase-1-task-2-dev-inventory-intent-files.md](./phase-1-task-2-dev-inventory-intent-files.md)
-  - [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
-  - [docs/planning/infra-roadmap-single-host-k3s-dev.md](../planning/infra-roadmap-single-host-k3s-dev.md)
+  - [docs/implementation/phase-1/phase-1-task-2-dev-inventory-intent-files.md](./phase-1-task-2-dev-inventory-intent-files.md)
+  - [docs/contracts/EM-Infra-Talos-Proxmox-Architecture.md](../../contracts/EM-Infra-Talos-Proxmox-Architecture.md)
+  - [docs/planning/infra-roadmap-single-host-k3s-dev.md](../../planning/infra-roadmap-single-host-k3s-dev.md)
 
 Dependency note: This task defines canonical inventory intent only. Talos machine-config generation and related output artifacts are validated in roadmap Phase 3 (`talos-gen-config` workflow).
