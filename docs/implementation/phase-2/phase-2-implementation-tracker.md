@@ -51,6 +51,7 @@ If any task below conflicts with the architecture document, [docs/contracts/EM-I
 - P2-T3: [docs/implementation/phase-2/phase-2-task-3-output-contract-for-bootstrap.md](./phase-2-task-3-output-contract-for-bootstrap.md)
 - P2-T4: [docs/implementation/phase-2/phase-2-task-4-local-state-operations.md](./phase-2-task-4-local-state-operations.md)
 - P2-T5: [docs/implementation/phase-2/phase-2-task-5-idempotency-verification.md](./phase-2-task-5-idempotency-verification.md)
+- P2-T6: [docs/implementation/phase-2/phase-2-task-6-proxmox-ansible-integration.md](./phase-2-task-6-proxmox-ansible-integration.md)
 
 ## 1) Minimum input contract
 
@@ -104,12 +105,23 @@ If any task below conflicts with the architecture document, [docs/contracts/EM-I
 
 ---
 
+## 6) Proxmox-ansible integration
+
+**Goal:** Automate Proxmox host prep with proxmox-ansible so Talos templates and Terraform can run without manual ISO uploads.
+
+- [x] Document YAML inventory + host_vars mapping for proxmox-ansible
+- [x] Run proxmox-ansible full stack and capture reports
+- [x] Confirm Talos ISO exists at `local:iso/<talos.iso>` and Talos template pipeline succeeds
+- [x] Terraform `plan` unblocked with prepared template names and provider inputs
+
+---
+
 ## Validation Gate (Phase 2 Exit)
 
 Run and record outputs:
 
-- [ ] `terraform -chdir=terraform/environments/k3s-dev init -input=false`
-- [ ] `terraform -chdir=terraform/environments/k3s-dev plan -var-file=terraform.tfvars`
+- [x] `terraform -chdir=terraform/environments/k3s-dev init -input=false`
+- [x] `terraform -chdir=terraform/environments/k3s-dev plan -var-file=terraform.tfvars`
 - [ ] `terraform -chdir=terraform/environments/k3s-dev apply -var-file=terraform.tfvars`
 - [ ] `terraform -chdir=terraform/environments/k3s-dev plan -var-file=terraform.tfvars`
 
@@ -129,6 +141,8 @@ Gate pass criteria:
 | 2026-02-17 | P2-T1 | Documented minimum Terraform input contract in `terraform.tfvars.example` and `k3s-dev` README, including explicit worker/GPU topology controls | `terraform -chdir=terraform/environments/k3s-dev init -input=false && terraform -chdir=terraform/environments/k3s-dev validate` | Complete | Validation succeeded after docs update |
 | 2026-02-17 | P2-T2 | Hardened Terraform variable validation in `k3s-dev` for required inputs, CIDRs, PCI BDF format, and operator-facing error messages | `terraform -chdir=terraform/environments/k3s-dev validate` | Complete | Validation succeeded |
 | 2026-02-17 | P2-T3 | Implemented stable `talos_*` output contract in `k3s-dev/outputs.tf`, retained legacy outputs as deprecated compatibility, and documented contract retrieval in `k3s-dev` README | `terraform -chdir=terraform/environments/k3s-dev validate && terraform -chdir=terraform/environments/k3s-dev output -json` | Complete | Config validates; new outputs will appear in state after next apply |
+| 2026-02-17 | P2-T6 | Ran proxmox-ansible full stack (custom Dockerfile) against vmhost; fetched Talos ISO to local:iso; added autoinstall support to template playbook; finalized VMID 9000 to template talos-v1.12.4-base on tank | proxmox-ansible play, prepare-template (autoinstall + finalize) | In progress | Next: run Terraform plan with updated tfvars |
+| 2026-02-17 | P2-T6 | Terraform plan succeeded using template talos-v1.12.4-base via containerized terraform:1.14.5 with env tfvars | `docker run --rm -v "$PWD:/workspace" -w /workspace/terraform/environments/k3s-dev hashicorp/terraform:1.14.5 plan -var-file=terraform.tfvars` | Complete | Plan shows 2 VMs (control + worker) to create; outputs populated after apply |
 
 ---
 
@@ -153,5 +167,6 @@ Gate pass criteria:
 - [ ] Task 3 complete (apply verification pending)
 - [ ] Task 4 complete
 - [ ] Task 5 complete
+- [ ] Task 6 complete
 - [ ] Validation gate passed
 - [ ] Evidence log updated with command output summaries
