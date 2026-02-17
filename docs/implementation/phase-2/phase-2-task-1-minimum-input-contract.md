@@ -6,7 +6,7 @@
 - Phase: Phase 2 (Days 8-14)
 - Title: Confirm minimum input set for `k3s-dev`
 - Owner: Solo developer + AI assistants
-- Status: Not started
+- Status: Complete
 - Last Updated: 2026-02-17
 
 ---
@@ -57,8 +57,8 @@ Define and document the smallest complete `terraform.tfvars` input set required 
 
 ## Target Files
 
-- [ ] `terraform/environments/k3s-dev/terraform.tfvars.example`
-- [ ] `terraform/environments/k3s-dev/README.md`
+- [x] `terraform/environments/k3s-dev/terraform.tfvars.example`
+- [x] `terraform/environments/k3s-dev/README.md`
 
 ---
 
@@ -87,9 +87,9 @@ Define and document the smallest complete `terraform.tfvars` input set required 
 
 ## Acceptance Criteria
 
-- [ ] Required input set is documented in one place and matches current code.
-- [ ] `terraform.tfvars.example` includes worker and GPU PCI BDF examples.
-- [ ] No architecture-boundary conflicts introduced.
+- [x] Required input set is documented in one place and matches current code.
+- [x] `terraform.tfvars.example` includes worker and GPU PCI BDF examples.
+- [x] No architecture-boundary conflicts introduced.
 
 ---
 
@@ -105,6 +105,7 @@ Define and document the smallest complete `terraform.tfvars` input set required 
 | Date | Step | Change | Validation | Result | Notes |
 |---|---|---|---|---|---|
 | 2026-02-17 | Task doc creation | Defined P2-T1 scope and checklist | N/A | Complete | Ready for execution |
+| 2026-02-17 | Minimum input contract | Updated tfvars example and README with explicit required input set and topology controls (`worker_count`, `gpu_worker_pci_bdfs`) | `terraform -chdir=terraform/environments/k3s-dev init -input=false && terraform -chdir=terraform/environments/k3s-dev validate` | Complete | Validate passed after documentation updates |
 
 ---
 

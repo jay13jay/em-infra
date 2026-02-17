@@ -16,6 +16,17 @@ Important notes:
 - For Talos workflows, do not treat guest-agent-derived IP fields as canonical runtime discovery.
 - Prefer static/reserved addressing and post-bootstrap discovery via `talosctl`.
 
+Minimum input set (MVP):
+
+- Required provider auth: `proxmox_api_url`, `proxmox_api_token_id`, `proxmox_api_token_secret`
+- Required placement and control-plane template: `node`, `control_plane_template`
+- Required topology controls:
+	- non-GPU workers: `worker_count` (set `0..N`; if `>0`, set `worker_template`)
+	- GPU workers: `gpu_worker_pci_bdfs` (set `[]` for none; one worker per BDF)
+	- when `gpu_worker_pci_bdfs` is non-empty, set `gpu_worker_template`
+
+See `terraform/environments/k3s-dev/terraform.tfvars.example` for canonical variable names and baseline values.
+
 Usage:
 
 1. Copy `terraform.tfvars.example` to `terraform.tfvars` and update credentials and templates.

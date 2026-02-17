@@ -56,9 +56,10 @@ If any task below conflicts with the architecture document, [docs/contracts/EM-I
 
 **Goal:** Document the smallest complete input set required to provision expected topology.
 
-- [ ] Confirm required fields in `terraform/environments/k3s-dev/terraform.tfvars.example`
-- [ ] Ensure control plane, worker count, and GPU PCI BDF list are explicitly covered
-- [ ] Align examples with current module variable names
+- [x] Confirm required fields in `terraform/environments/k3s-dev/terraform.tfvars.example`
+- [x] Ensure control plane, worker count, and GPU PCI BDF list are explicitly covered
+- [x] Align examples with current module variable names
+
 
 ---
 
@@ -124,6 +125,7 @@ Gate pass criteria:
 | Date | Task | Change Summary | Validation Command | Result | Notes |
 |---|---|---|---|---|---|
 | 2026-02-17 | Tracker creation | Added Phase 2 tracker and task breakdown | N/A | Complete | Phase kickoff |
+| 2026-02-17 | P2-T1 | Documented minimum Terraform input contract in `terraform.tfvars.example` and `k3s-dev` README, including explicit worker/GPU topology controls | `terraform -chdir=terraform/environments/k3s-dev init -input=false && terraform -chdir=terraform/environments/k3s-dev validate` | Complete | Validation succeeded after docs update |
 
 ---
 
@@ -143,7 +145,7 @@ Gate pass criteria:
 
 ## Phase 2 Completion Checklist
 
-- [ ] Task 1 complete
+- [x] Task 1 complete
 - [ ] Task 2 complete
 - [ ] Task 3 complete
 - [ ] Task 4 complete
