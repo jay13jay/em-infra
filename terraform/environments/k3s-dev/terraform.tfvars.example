@@ -7,17 +7,17 @@ proxmox_api_token_secret = "REDACTED"
 env_name = "k3s-dev"
 node = "pve"
 
-# Control plane template (cloud-init + qemu-guest-agent)
-control_plane_template = "ubuntu-22-cloudinit-template"
+# Control plane template (Talos VM template prepared on Proxmox)
+control_plane_template = "ubuntu-24-talos-template"
 
 # Required topology controls
 # Non-GPU workers: set to 0..N
 worker_count = 0
-worker_template = "ubuntu-22-cloudinit-template"
+worker_template = "ubuntu-24-talos-template"
 
 # GPU workers: one per PCI BDF. Use [] for no GPU workers.
 gpu_worker_pci_bdfs = ["0000:03:00.0"]
-gpu_worker_template = "ubuntu-22-cloudinit-template"
+gpu_worker_template = "ubuntu-24-talos-template"
 
 # SSH keys to inject into all VMs
 # Operator must ensure matching private key is available for Ansible (see ansible/group_vars/all.yml)

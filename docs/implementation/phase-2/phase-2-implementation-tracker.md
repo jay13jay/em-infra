@@ -78,8 +78,8 @@ If any task below conflicts with the architecture document, [docs/contracts/EM-I
 
 **Goal:** Provide deterministic outputs required by Phase 3 Talos orchestration.
 
-- [ ] Define required outputs (control-plane endpoints, node IP map, VM IDs as needed)
-- [ ] Ensure output names are stable and documented
+- [x] Define required outputs (control-plane endpoints, node IP map, VM IDs as needed)
+- [x] Ensure output names are stable and documented
 - [ ] Verify outputs are available after apply
 
 ---
@@ -128,6 +128,7 @@ Gate pass criteria:
 | 2026-02-17 | Tracker creation | Added Phase 2 tracker and task breakdown | N/A | Complete | Phase kickoff |
 | 2026-02-17 | P2-T1 | Documented minimum Terraform input contract in `terraform.tfvars.example` and `k3s-dev` README, including explicit worker/GPU topology controls | `terraform -chdir=terraform/environments/k3s-dev init -input=false && terraform -chdir=terraform/environments/k3s-dev validate` | Complete | Validation succeeded after docs update |
 | 2026-02-17 | P2-T2 | Hardened Terraform variable validation in `k3s-dev` for required inputs, CIDRs, PCI BDF format, and operator-facing error messages | `terraform -chdir=terraform/environments/k3s-dev validate` | Complete | Validation succeeded |
+| 2026-02-17 | P2-T3 | Implemented stable `talos_*` output contract in `k3s-dev/outputs.tf`, retained legacy outputs as deprecated compatibility, and documented contract retrieval in `k3s-dev` README | `terraform -chdir=terraform/environments/k3s-dev validate && terraform -chdir=terraform/environments/k3s-dev output -json` | Complete | Config validates; new outputs will appear in state after next apply |
 
 ---
 
@@ -149,7 +150,7 @@ Gate pass criteria:
 
 - [x] Task 1 complete
 - [x] Task 2 complete
-- [ ] Task 3 complete
+- [ ] Task 3 complete (apply verification pending)
 - [ ] Task 4 complete
 - [ ] Task 5 complete
 - [ ] Validation gate passed

@@ -12,7 +12,7 @@ Important notes:
 - This environment provisions VMs only. Terraform manages VM lifecycle and host resources; Talos is responsible for node OS configuration and runtime state (bootstrapping and in-cluster lifecycle).
 - GPU workers are created one-per-PCI BDF. To scale GPU workers add/remove entries in `gpu_worker_pci_bdfs`.
 - The `gpu_worker` module expects the GPU to be bound on the host (see `modules/gpu_worker/README.md`). Terraform will not rebind host devices.
-- **Outputs are list-valued** for orchestration compatibility: `control_plane_ips`, `worker_ips`, `gpu_worker_ips`.
+- **Phase 2 output contract is stable** via `talos_bootstrap_contract` and related `talos_*` outputs.
 - For Talos workflows, do not treat guest-agent-derived IP fields as canonical runtime discovery.
 - Prefer static/reserved addressing and post-bootstrap discovery via `talosctl`.
 
@@ -44,6 +44,25 @@ terraform -chdir=terraform/environments/k3s-dev apply -var-file=terraform.tfvars
 ```bash
 terraform -chdir=terraform/environments/k3s-dev output
 ```
+
+Phase 2 bootstrap output contract (stable names):
+
+- `talos_control_plane_endpoints`: list of control-plane endpoint IPs for Talos bootstrap entrypoints
+- `talos_bootstrap_nodes`: role-grouped node objects (`control_plane`, `workers`, `gpu_workers`) with `name`, `vmid`, `ip`, `node` and GPU `gpu_pci_bdf` where applicable
+- `talos_node_ip_map`: map of node name to IP
+- `talos_node_vmid_map`: map of node name to Proxmox VMID
+- `talos_bootstrap_contract`: canonical composite object that includes all the above in one machine-consumable payload
+
+Example machine-consumable retrieval:
+
+```bash
+terraform -chdir=terraform/environments/k3s-dev output -json talos_bootstrap_contract
+terraform -chdir=terraform/environments/k3s-dev output -json talos_bootstrap_nodes
+```
+
+Backward-compatibility note:
+
+- Legacy outputs (`control_plane_ips`, `worker_ips`, `gpu_worker_ips`, and related VMID/BDF outputs) remain available for existing workflows but are deprecated in favor of the `talos_*` contract.
 
 MVP local state guardrails:
 
