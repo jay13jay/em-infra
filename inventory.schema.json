@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EM-Infra inventory schema",
+  "definitions": {
+    "cluster": {
+      "type": "object",
+      "required": ["cluster_name", "environment", "talos_version", "kubernetes_version", "network"],
+      "properties": {
+        "cluster_name": {"type": "string"},
+        "environment": {"type": "string"},
+        "talos_version": {"type": "string"},
+        "kubernetes_version": {"type": "string"},
+        "network": {
+          "type": "object",
+          "required": ["pod_cidr", "service_cidr"],
+          "properties": {
+            "pod_cidr": {"type": "string"},
+            "service_cidr": {"type": "string"}
+          }
+        }
+      }
+    },
+    "nodes": {
+      "type": "object",
+      "required": ["nodes"],
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "ip", "roles"],
+            "properties": {
+              "name": {"type": "string"},
+              "ip": {"type": "string"},
+              "roles": {"type": "array", "items": {"type": "string"}},
+              "cpu": {"type": "integer"},
+              "ram_mb": {"type": "integer"},
+              "disk_gb": {"type": "integer"},
+              "gpu": {"type": "boolean"},
+              "proxmox": {"type": "object"}
+            }
+          }
+        }
+      }
+    }
+  }
+}

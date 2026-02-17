@@ -1,0 +1,27 @@
+nodes:
+  - name: dev-node-1
+    ip: 192.168.122.50
+    roles:
+      - control-plane
+      - worker
+    cpu: 4
+    ram_mb: 8192
+    disk_gb: 40
+    proxmox:
+      vmid: 6001
+      pool: dev
+
+  - name: dev-gpu-1
+    ip: 192.168.122.60
+    roles:
+      - gpu-worker
+    cpu: 8
+    ram_mb: 32768
+    disk_gb: 200
+    gpu: true
+    proxmox:
+      vmid: 6010
+      pool: gpu
+
+# Example nodes.yaml for single-host dev topology plus an optional GPU worker.
+# The `roles` use kebab-case: `control-plane`, `worker`, `gpu-worker`.

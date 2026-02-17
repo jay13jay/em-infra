@@ -178,6 +178,9 @@ Use this section as implementation progresses.
 - Architecture document remains canonical for conflicts.
 - Terraform manages VM lifecycle only — it creates and configures virtual machines and host-level resources; Talos is solely responsible for node OS configuration and runtime state.
 
+- Canonical inventory location: `inventory/dev/` (decided 2026-02-17).
+- Inventory node role naming: kebab-case (`control-plane`, `worker`, `gpu-worker`).
+
 ### Open questions
 
 - [ ] Final canonical location for inventory intent (`inventory/dev/` vs existing `ansible/inventory/` structure)
