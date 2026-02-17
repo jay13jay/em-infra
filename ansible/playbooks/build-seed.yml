@@ -3,10 +3,25 @@
   hosts: preseed
   connection: local
   gather_facts: false
+  pre_tasks:
+    - name: Read optional explicit public key input
+      ansible.builtin.set_fact:
+        build_ssh_pubkey_input: "{{ lookup('env', 'BUILD_SSH_PUBKEY') | default('', true) | trim }}"
+
+    - name: Generate cluster-scoped SSH keypair when no explicit key was provided
+      ansible.builtin.include_role:
+        name: ssh_keys
+      when: build_ssh_pubkey_input | length == 0
+
+    - name: Select SSH public key for seed generation
+      ansible.builtin.set_fact:
+        build_ssh_pubkey: >-
+          {{ build_ssh_pubkey_input if (build_ssh_pubkey_input | length > 0) else ssh_cluster_public_key }}
+
   roles:
     - role: cloudinit_seed
   vars:
     build_hostname: ubuntu-seed
     build_instance_id: seed-{{ lookup('pipe','date +%s') }}
-    # Provide via -e build_ssh_pubkey="ssh-ed25519 AAAA..." or env BUILD_SSH_PUBKEY
-    build_ssh_pubkey: "{{ lookup('env', 'BUILD_SSH_PUBKEY') | default('', true) }}"
+    # Optional override via env BUILD_SSH_PUBKEY; otherwise role-generated cluster key is used.
+    ssh_keys_cluster_name: "{{ env_name | default('k3s-dev') }}"

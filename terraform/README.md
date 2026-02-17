@@ -82,5 +82,5 @@ talosctl --talosconfig <path-to-talosconfig> --endpoints <control-plane-ip> kube
 ```
 
 ## Requirements
-- Terraform >= 1.3.0
-- Proxmox Provider (Telmate/proxmox) 3.0.2-rc07
+- Terraform 1.14.x (tested with 1.14.5; pinned in configuration)
+- Proxmox Provider (Telmate/proxmox) 3.0.2-rc07 (current Telmate release tag)

@@ -8,16 +8,16 @@ env_name = "k3s-dev"
 node = "pve"
 
 # Control plane template (Talos VM template prepared on Proxmox)
-control_plane_template = "ubuntu-24-talos-template"
+control_plane_template = "talos-v1.12.4-base"
 
 # Required topology controls
 # Non-GPU workers: set to 0..N
 worker_count = 0
-worker_template = "ubuntu-24-talos-template"
+worker_template = "talos-v1.12.4-base"
 
 # GPU workers: one per PCI BDF. Use [] for no GPU workers.
 gpu_worker_pci_bdfs = ["0000:03:00.0"]
-gpu_worker_template = "ubuntu-24-talos-template"
+gpu_worker_template = "talos-v1.12.4-base"
 
 # SSH keys to inject into all VMs
 # Operator must ensure matching private key is available for Ansible (see ansible/group_vars/all.yml)

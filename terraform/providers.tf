@@ -4,12 +4,12 @@
 // - THIS FILE DOES NOT CREATE ANY VM RESOURCES
 
 terraform {
-  required_version = ">= 1.3.0"
+  # Pin to the latest tested Terraform minor to avoid surprise upgrades
+  required_version = ">= 1.14.5, < 1.15.0"
 
   required_providers {
     proxmox = {
       source  = "Telmate/proxmox"
-      # Pin to the requested v3 pre-release (user requested v3.0.2-rc7)
       version = "3.0.2-rc07"
     }
   }

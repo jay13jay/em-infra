@@ -15,14 +15,34 @@ Principles
 - Keep playbooks simple and idempotent.
 - Avoid relying on guest-agent-only metadata as a source of truth.
 
+Tooling versions
+----------------
+
+- ansible-core 2.20.2 (requires Python >= 3.12)
+- Install locally with:
+
+   ```bash
+   python3 -m venv .venv
+   . .venv/bin/activate
+   pip install -r ansible/requirements.txt
+   ```
+
 Quickstart
 ----------
 
 Talos-oriented workflow:
 
-1. Ensure Terraform has been applied for your environment.
-2. Bootstrap Talos cluster (per roadmap/architecture flow).
-3. Retrieve live cluster information with `talosctl`:
+1. Prepare Talos base template in Proxmox using Ansible:
+
+   ```bash
+   ansible-playbook -i ansible/inventory/proxmox/hosts.ini ansible/playbooks/prepare-template.yml
+   ```
+
+   See `ansible/README_PREPARE_TEMPLATE.md` for the full two-stage install/finalize flow and naming contract.
+
+2. Provision VMs with Terraform for your environment.
+3. Bootstrap Talos cluster (per roadmap/architecture flow).
+4. Retrieve live cluster information with `talosctl`:
 
    ```bash
    talosctl --talosconfig <path-to-talosconfig> --endpoints <control-plane-ip> --nodes <control-plane-ip> get members
@@ -59,3 +79,17 @@ Notes
 
 - Talos workflows should prefer static/reserved node addresses and `talosctl` state inspection.
 - The inventory plugin config references the Terraform environment and is intended for non-Talos SSH-based flows.
+- Talos base templates use `talos-v<major>.<minor>.<patch>-base` naming (example: `talos-v1.12.4-base`).
+
+Cluster-scoped SSH keys
+-----------------------
+
+- Use role `ssh_keys` to generate and manage dedicated keypairs per cluster/environment.
+- Keys are stored under `ansible/.keys/<cluster-name>/` by default.
+- This avoids reusing long-lived personal SSH keys across infra automation.
+- Run key management directly with:
+
+   ```bash
+   ansible-playbook ansible/playbooks/manage-ssh-keys.yml -e ssh_keys_cluster_name=k3s-dev
+   ```
+- `ansible/playbooks/site.yml` now runs the `ssh_keys` role first and defaults SSH auth to the generated cluster key path.

@@ -32,6 +32,7 @@ terraform.rc
 *.key
 id_rsa
 id_rsa.pub
+ansible/.keys/
 
 # Local ISO and image downloads used for building templates
 terraform/files/isos/

@@ -64,7 +64,7 @@ This roadmap defines the infrastructure MVP delivery path for this repository:
 
 ### Preparation + provisioning baseline
 
-- Template prep shell automation exists for current flow: `scripts/prepare_template.sh`
+- Template prep Ansible playbook exists for Talos flow: `ansible/playbooks/prepare-template.yml`
 - Environment provisioning exists: `terraform/environments/k3s-dev/main.tf`
 - Current VM modules exist and are usable as migration references:
   - `terraform/modules/vm_ubuntu22/`

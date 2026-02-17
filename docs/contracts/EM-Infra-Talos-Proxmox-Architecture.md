@@ -176,7 +176,7 @@ Defines global cluster properties.
 
 ```
 cluster_name: dev
-talos_version: v1.8.2
+talos_version: v1.12.4
 kubernetes_version: v1.30.1
 
 network:
