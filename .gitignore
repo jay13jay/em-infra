@@ -1,25 +1,30 @@
 .DS_Store
-node_modules/
 .env
-.vscode/
 .idea/
+.vscode/
+
+# Logs / caches / build output
 *.log
+*.tgz
 .buildcache/
-.terraform/
-.terraform.lock.hcl
-**/dist/
 **/build/
+**/dist/
 **/*.pyc
 *.pickle
 /coverage/
-*.tgz
 .tmp/
 
-# Terraform sensitive / local
-*.tfvars
-*.tfvars.json
+# Package/dependency dirs
+node_modules/
+.venv*
+
+# Terraform (state, overrides, caches)
+.terraform/
+.terraform.lock.hcl
 *.tfstate
 *.tfstate.*
+*.tfvars
+*.tfvars.json
 override.tf
 override.tf.json
 *_override.tf
@@ -27,15 +32,14 @@ override.tf.json
 .terraformrc
 terraform.rc
 
-# SSH / keys
+# Secrets / SSH material
 *.pem
 *.key
 id_rsa
 id_rsa.pub
 ansible/.keys/
 
-# Local ISO and image downloads used for building templates
+# Local-only artifacts
 terraform/files/isos/
 tmp/*
-.venv*
 ansible/inventory/*
