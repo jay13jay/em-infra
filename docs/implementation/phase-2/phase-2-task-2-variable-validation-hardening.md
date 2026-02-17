@@ -6,7 +6,7 @@
 - Phase: Phase 2 (Days 8-14)
 - Title: Harden variable validation for safe reruns
 - Owner: Solo developer + AI assistants
-- Status: Not started
+- Status: Complete
 - Last Updated: 2026-02-17
 
 ---
@@ -57,8 +57,8 @@ Improve Terraform input validation so invalid CIDRs, template references, IDs, a
 
 ## Target Files
 
-- [ ] `terraform/environments/k3s-dev/variables.tf`
-- [ ] `terraform/modules/**/variables.tf` (only where needed)
+- [x] `terraform/environments/k3s-dev/variables.tf`
+- [ ] `terraform/modules/**/variables.tf` (not needed for this task)
 
 ---
 
@@ -87,9 +87,9 @@ Improve Terraform input validation so invalid CIDRs, template references, IDs, a
 
 ## Acceptance Criteria
 
-- [ ] Validation covers CIDR, template naming/reference, and required ID classes.
-- [ ] Error messages describe fix path, not only failure reason.
-- [ ] No architecture-boundary conflicts introduced.
+- [x] Validation covers CIDR, template naming/reference, and required ID classes.
+- [x] Error messages describe fix path, not only failure reason.
+- [x] No architecture-boundary conflicts introduced.
 
 ---
 
@@ -105,6 +105,7 @@ Improve Terraform input validation so invalid CIDRs, template references, IDs, a
 | Date | Step | Change | Validation | Result | Notes |
 |---|---|---|---|---|---|
 | 2026-02-17 | Task doc creation | Defined P2-T2 validation hardening plan | N/A | Complete | Ready for execution |
+| 2026-02-17 | Validation hardening | Added validation blocks for required Proxmox inputs, naming, topology counts, CIDRs, GPU PCI BDF format, and timeout bounds in `k3s-dev` variables | `terraform -chdir=terraform/environments/k3s-dev validate` | Complete | Validation succeeded |
 
 ---
 

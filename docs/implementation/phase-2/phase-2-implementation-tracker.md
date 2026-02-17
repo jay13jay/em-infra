@@ -67,9 +67,10 @@ If any task below conflicts with the architecture document, [docs/contracts/EM-I
 
 **Goal:** Fail fast on bad data before resource creation.
 
-- [ ] Add/adjust validations for CIDRs, template names, IDs, and topology counts
-- [ ] Keep validation messages actionable and operator-facing
-- [ ] Confirm no contradictory validation exists across root and environment layers
+- [x] Add/adjust validations for CIDRs, template names, IDs, and topology counts
+- [x] Keep validation messages actionable and operator-facing
+- [x] Confirm no contradictory validation exists across root and environment layers
+
 
 ---
 
@@ -126,6 +127,7 @@ Gate pass criteria:
 |---|---|---|---|---|---|
 | 2026-02-17 | Tracker creation | Added Phase 2 tracker and task breakdown | N/A | Complete | Phase kickoff |
 | 2026-02-17 | P2-T1 | Documented minimum Terraform input contract in `terraform.tfvars.example` and `k3s-dev` README, including explicit worker/GPU topology controls | `terraform -chdir=terraform/environments/k3s-dev init -input=false && terraform -chdir=terraform/environments/k3s-dev validate` | Complete | Validation succeeded after docs update |
+| 2026-02-17 | P2-T2 | Hardened Terraform variable validation in `k3s-dev` for required inputs, CIDRs, PCI BDF format, and operator-facing error messages | `terraform -chdir=terraform/environments/k3s-dev validate` | Complete | Validation succeeded |
 
 ---
 
@@ -146,7 +148,7 @@ Gate pass criteria:
 ## Phase 2 Completion Checklist
 
 - [x] Task 1 complete
-- [ ] Task 2 complete
+- [x] Task 2 complete
 - [ ] Task 3 complete
 - [ ] Task 4 complete
 - [ ] Task 5 complete
