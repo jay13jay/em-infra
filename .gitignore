@@ -42,4 +42,9 @@ ansible/.keys/
 # Local-only artifacts
 terraform/files/isos/
 tmp/*
-ansible/inventory/*
+
+# Ansible inventory (commit topology, exclude secrets only)
+ansible/inventory/**/*.sops.yaml
+ansible/inventory/**/secrets.yaml
+ansible/inventory/**/*.key
+ansible/inventory/**/*.pem
