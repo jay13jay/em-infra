@@ -6,7 +6,7 @@
 - Phase: Phase 2 (Days 8-14)
 - Title: Define local-state backup and restore rules
 - Owner: Solo developer + AI assistants
-- Status: Not started
+- Status: Complete
 - Last Updated: 2026-02-17
 
 ---
@@ -57,8 +57,8 @@ Publish a practical, low-friction local-state routine (location, backup cadence,
 
 ## Target Files
 
-- [ ] `terraform/README.md`
-- [ ] `terraform/environments/k3s-dev/README.md`
+- [x] `terraform/README.md`
+- [x] `terraform/environments/k3s-dev/README.md`
 
 ---
 
@@ -76,6 +76,7 @@ Publish a practical, low-friction local-state routine (location, backup cadence,
 ### Commands
 
 - `terraform -chdir=terraform/environments/k3s-dev validate`
+- `MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd -W):/workspace" -w /workspace/terraform/environments/k3s-dev hashicorp/terraform:1.14.5 validate`
 - `test -f terraform/environments/k3s-dev/terraform.tfstate || true`
 
 ### Expected results
@@ -87,9 +88,9 @@ Publish a practical, low-friction local-state routine (location, backup cadence,
 
 ## Acceptance Criteria
 
-- [ ] Local state location, backup, and restore are documented end-to-end.
-- [ ] Guidance explicitly states that state artifacts are not committed.
-- [ ] No architecture-boundary conflicts introduced.
+- [x] Local state location, backup, and restore are documented end-to-end.
+- [x] Guidance explicitly states that state artifacts are not committed.
+- [x] No architecture-boundary conflicts introduced.
 
 ---
 
@@ -105,11 +106,12 @@ Publish a practical, low-friction local-state routine (location, backup cadence,
 | Date | Step | Change | Validation | Result | Notes |
 |---|---|---|---|---|---|
 | 2026-02-17 | Task doc creation | Defined P2-T4 local-state operations plan | N/A | Complete | Ready for execution |
+| 2026-02-17 | Documentation implementation | Added canonical state location, backup cadence, restore procedure, and accidental-loss handling in Terraform root and `k3s-dev` READMEs | `MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd -W):/workspace" -w /workspace/terraform/environments/k3s-dev hashicorp/terraform:1.14.5 init -input=false && MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd -W):/workspace" -w /workspace/terraform/environments/k3s-dev hashicorp/terraform:1.14.5 validate` | Complete | Local Terraform 1.12.2 is below repo requirement; pinned container validation succeeded |
 
 ---
 
 ## Handoff Notes
 
 - Follow-up task(s): P2-T5 final idempotency proof
-- Open questions: Should backup cadence be per-apply or end-of-day minimum?
+- Open questions: Resolved for MVP — backup is required before write operations and end-of-day after infra changes.
 - What to attach in next AI context window: this task doc + Terraform READMEs + `.gitignore`

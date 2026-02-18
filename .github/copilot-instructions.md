@@ -7,7 +7,7 @@ This is an infrastructure-as-code repository for managing Kubernetes clusters on
 - **Terraform** for VM lifecycle management
 - **Ansible** for orchestration and bootstrap workflows
 - **Talos Linux** for immutable Kubernetes nodes
-- **Kubernetes (k3s/Talos)** for workload orchestration
+- **Kubernetes (Talos)** for workload orchestration
 - **Docker/Compose** for local development
 
 ## Repository Structure

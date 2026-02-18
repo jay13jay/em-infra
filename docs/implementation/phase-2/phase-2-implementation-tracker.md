@@ -89,9 +89,9 @@ If any task below conflicts with the architecture document, [docs/contracts/EM-I
 
 **Goal:** Make state handling safe for a solo local workflow.
 
-- [ ] Document state file location and handling rules
-- [ ] Define backup cadence and command examples
-- [ ] Define restore procedure and drift precautions
+- [x] Document state file location and handling rules
+- [x] Define backup cadence and command examples
+- [x] Define restore procedure and drift precautions
 
 ---
 
@@ -148,6 +148,7 @@ Gate pass criteria:
 | 2026-02-17 | Arch Review | Conducted comprehensive architectural alignment review; identified critical gap: k3s-dev environment using vm_ubuntu22 module (cloud-init/qemu-guest-agent) incompatible with Talos architecture contract | Manual review of changes vs architecture doc | Issues found | CRITICAL: Module mismatch blocks Talos integration |
 | 2026-02-17 | Module Creation | Created terraform/modules/proxmox-talos-vm module per architecture spec (lines 406-413); implements Talos-native provisioning without cloud-init or guest-agent assumptions; includes GPU passthrough support | Module file creation | Complete | New module ready for integration into environments |
 | 2026-02-17 | .gitignore Fix | Fixed .gitignore to allow inventory YAML commits (single-source-of-truth principle); now excludes only secrets (*.sops.yaml) instead of entire ansible/inventory/* directory | .gitignore update | Complete | Inventory versioning restored |
+| 2026-02-17 | P2-T4 | Documented local-state operations in Terraform root and `k3s-dev` READMEs, including canonical state location, backup cadence, restore routine, and accidental-loss handling | `MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd -W):/workspace" -w /workspace/terraform/environments/k3s-dev hashicorp/terraform:1.14.5 init -input=false && MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd -W):/workspace" -w /workspace/terraform/environments/k3s-dev hashicorp/terraform:1.14.5 validate` | Complete | Containerized validate used because local Terraform 1.12.2 does not satisfy required_version |
 
 ---
 
@@ -170,7 +171,7 @@ Gate pass criteria:
 - [x] Task 1 complete
 - [x] Task 2 complete
 - [x] Task 3 complete
-- [ ] Task 4 complete
+- [x] Task 4 complete
 - [ ] Task 5 complete
 - [x] Task 6 complete
 - [ ] Validation gate passed
