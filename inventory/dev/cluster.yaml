@@ -1,7 +1,10 @@
 cluster_name: em-dev-single
 environment: dev
+# Talos version determines the supported Kubernetes version.
+# Talos v1.12.4 ships with and is tested against Kubernetes v1.35.0.
+# Using a different Kubernetes version is not officially supported and may cause compatibility issues.
 talos_version: v1.12.4
-kubernetes_version: v1.28.0
+kubernetes_version: v1.35.0
 network:
   pod_cidr: 10.244.0.0/16
   service_cidr: 10.96.0.0/12
