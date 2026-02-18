@@ -18,7 +18,7 @@ Principles
 Tooling versions
 ----------------
 
-- ansible-core 2.20.2 (requires Python >= 3.12)
+- ansible-core 2.20.2 (pinned; requires Python >= 3.12)
 - Install locally with:
 
    ```bash

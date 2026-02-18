@@ -32,7 +32,7 @@ Use this page first, then follow links by intent (architecture, planning, implem
 | Terraform | 1.14.5 (pinned `<1.15`) | Matches `terraform/providers.tf` and modules |
 | Telmate/proxmox provider | 3.0.2-rc07 | Pinned in provider blocks and locks |
 | Talos | v1.12.4 | Inventory, templates, docs aligned |
-| ansible-core | 2.20.2 | Requires Python >= 3.12; see ansible/requirements.txt |
+| ansible-core | 2.20.2 | Exact pin; requires Python >= 3.12; see ansible/requirements.txt and tools/proxmox-ansible.Dockerfile |
 
 ## By Audience
 

@@ -8,8 +8,8 @@ RUN apt-get update \
        git sshpass openssh-client \
     && rm -rf /var/lib/apt/lists/*
 
-# Install ansible-core; pin to the version used in repo docs
-RUN pip install --no-cache-dir "ansible-core>=2.20,<2.21" passlib
+# Install ansible-core; keep exact pin aligned with ansible/requirements.txt
+RUN pip install --no-cache-dir "ansible-core==2.20.2" passlib
 
 # Install required collections for proxmox-ansible (community.general for archive, ansible.posix for authorized_key, etc.)
 RUN ansible-galaxy collection install community.general ansible.posix --force
