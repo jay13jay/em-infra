@@ -68,19 +68,55 @@ Backward-compatibility note:
 
 MVP local state guardrails:
 
-- State is local: `terraform/environments/k3s-dev/terraform.tfstate`.
-- Before major changes, create a timestamped backup from repo root:
+- Canonical state path: `terraform/environments/k3s-dev/terraform.tfstate`.
+- Terraform rolling backup path: `terraform/environments/k3s-dev/terraform.tfstate.backup`.
+- Optional operator snapshots path: `terraform/environments/k3s-dev/state-backups/`.
+- Keep `terraform.tfvars` and all state artifacts out of version control.
+
+Backup cadence:
+
+- Always snapshot state before `apply`, `destroy`, `import`, or `terraform state rm/mv`.
+- Snapshot at end-of-day after successful infrastructure changes.
+
+Backup command (repo root):
 
 ```bash
-cp terraform/environments/k3s-dev/terraform.tfstate terraform/environments/k3s-dev/terraform.tfstate.backup.$(date +%Y%m%d-%H%M%S)
+mkdir -p terraform/environments/k3s-dev/state-backups
+ts=$(date +%Y%m%d-%H%M%S)
+cp terraform/environments/k3s-dev/terraform.tfstate \
+  terraform/environments/k3s-dev/state-backups/terraform.tfstate.$ts
 ```
 
-- Keep `terraform.tfvars` and state files out of version control.
-- Run config validation before planning/apply:
+Pre-apply safety checks:
 
 ```bash
+test -f terraform/environments/k3s-dev/terraform.tfstate && terraform -chdir=terraform/environments/k3s-dev state list || true
 terraform -chdir=terraform/environments/k3s-dev validate
+terraform -chdir=terraform/environments/k3s-dev plan -var-file=terraform.tfvars
 ```
+
+Restore procedure:
+
+1. Stop concurrent Terraform operations for this environment.
+2. Preserve the current state copy:
+	```bash
+	cp terraform/environments/k3s-dev/terraform.tfstate terraform/environments/k3s-dev/terraform.tfstate.pre-restore.$(date +%Y%m%d-%H%M%S)
+	```
+3. Restore selected backup snapshot:
+	```bash
+	cp terraform/environments/k3s-dev/state-backups/terraform.tfstate.<timestamp> terraform/environments/k3s-dev/terraform.tfstate
+	```
+4. Reinitialize and verify state readability:
+	```bash
+	terraform -chdir=terraform/environments/k3s-dev init -input=false
+	terraform -chdir=terraform/environments/k3s-dev state list
+	```
+5. Run plan and confirm expected topology before applying further changes.
+
+If state is accidentally lost:
+
+- Preferred: restore the latest known-good snapshot.
+- If no usable snapshot exists, either import preserved VMs into a rebuilt state or perform a controlled rebuild for MVP workflows.
 
 Scaling GPU workers:
 

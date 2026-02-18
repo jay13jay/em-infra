@@ -37,14 +37,65 @@ terraform/
     terraform -chdir=terraform/environments/k3s-dev apply -var-file=terraform.tfvars
     ```
 
-## Local State Expectations (MVP)
+## Local State Operations (MVP, Solo Workflow)
 
-- State is local to `terraform/environments/k3s-dev/terraform.tfstate`.
-- Keep state backups before major changes:
-  ```bash
-  cp terraform/environments/k3s-dev/terraform.tfstate terraform/environments/k3s-dev/terraform.tfstate.backup.$(date +%Y%m%d-%H%M%S)
-  ```
-- Treat `terraform.tfvars` and state files as sensitive and do not commit them.
+Canonical state location:
+
+- Primary state file: `terraform/environments/k3s-dev/terraform.tfstate`
+- Terraform-managed rolling backup: `terraform/environments/k3s-dev/terraform.tfstate.backup`
+- Optional operator snapshots: `terraform/environments/k3s-dev/state-backups/`
+
+Non-commit rules:
+
+- State artifacts and variable files are local-only and must never be committed.
+- Repository ignore rules already exclude `*.tfstate`, `*.tfstate.*`, `*.tfvars`, and `*.tfvars.json`.
+
+Backup cadence (minimum):
+
+- Required: take a timestamped snapshot immediately before any `apply`, `destroy`, `import`, or `terraform state` mutation (`mv`/`rm`).
+- Required: take one end-of-day snapshot if infrastructure was changed.
+
+Example backup commands (from repository root):
+
+```bash
+mkdir -p terraform/environments/k3s-dev/state-backups
+ts=$(date +%Y%m%d-%H%M%S)
+cp terraform/environments/k3s-dev/terraform.tfstate \
+    terraform/environments/k3s-dev/state-backups/terraform.tfstate.$ts
+```
+
+Pre-apply sanity checks:
+
+```bash
+test -f terraform/environments/k3s-dev/terraform.tfstate && terraform -chdir=terraform/environments/k3s-dev state list || true
+terraform -chdir=terraform/environments/k3s-dev validate
+terraform -chdir=terraform/environments/k3s-dev plan -var-file=terraform.tfvars
+```
+
+Restore routine (from a known-good backup):
+
+1. Stop all Terraform writes for this environment.
+2. Preserve the current state copy before replacing it:
+     ```bash
+     cp terraform/environments/k3s-dev/terraform.tfstate terraform/environments/k3s-dev/terraform.tfstate.pre-restore.$(date +%Y%m%d-%H%M%S)
+     ```
+3. Restore the selected snapshot to the canonical state path:
+     ```bash
+     cp terraform/environments/k3s-dev/state-backups/terraform.tfstate.<timestamp> terraform/environments/k3s-dev/terraform.tfstate
+     ```
+4. Re-initialize and verify state readability:
+     ```bash
+     terraform -chdir=terraform/environments/k3s-dev init -input=false
+     terraform -chdir=terraform/environments/k3s-dev state list
+     ```
+5. Run `plan` and confirm output matches expected live topology before any `apply`.
+
+After accidental state loss:
+
+- If a recent snapshot exists, follow the restore routine above.
+- If no usable snapshot exists, choose one of:
+    - Reconcile via `terraform import` for resources that must be preserved.
+    - For rapid MVP recovery, perform controlled recreate (destroy/re-apply) if preserving current VMs is not required.
 
 ## Outputs
 The `k3s-dev` environment outputs remain available for orchestration and diagnostics.
