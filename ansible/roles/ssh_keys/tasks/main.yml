@@ -34,6 +34,7 @@
       -f {{ ssh_keys_private_key_path }}
       -N ''
       -C {{ ssh_keys_comment | quote }}
+    creates: "{{ ssh_keys_private_key_path }}"
   when:
     - ssh_keys_type == 'ed25519'
     - not ssh_private_key_stat.stat.exists
@@ -45,6 +46,7 @@
       -f {{ ssh_keys_private_key_path }}
       -N ''
       -C {{ ssh_keys_comment | quote }}
+    creates: "{{ ssh_keys_private_key_path }}"
   when:
     - ssh_keys_type == 'rsa'
     - not ssh_private_key_stat.stat.exists

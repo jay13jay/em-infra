@@ -1,2 +1,6 @@
 hosts.ini
 hosts.json
+
+# Ignore proxmox inventory (contains sensitive host vars)
+proxmox/
+proxmox;C/

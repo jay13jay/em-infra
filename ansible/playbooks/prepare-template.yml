@@ -57,11 +57,13 @@
     - name: Configure template disk
       ansible.builtin.command:
         cmd: "qm set {{ talos_template_vmid }} --scsi0 {{ talos_template_storage }}:{{ template_disk_gb }}"
+      changed_when: false
       when: vm_status.rc != 0
 
     - name: Attach Talos installer ISO
       ansible.builtin.command:
         cmd: "qm set {{ talos_template_vmid }} --ide2 {{ talos_iso_volume }},media=cdrom"
+      changed_when: false
 
     - name: Build Talos autoinstall kernel args
       ansible.builtin.set_fact:
@@ -86,11 +88,13 @@
         cmd: >-
           qm set {{ talos_template_vmid }}
           --args "-append \"{{ talos_kernel_args }}\""
+      changed_when: false
       when: talos_autoinstall | bool
 
     - name: Configure boot order for install stage
       ansible.builtin.command:
         cmd: 'qm set {{ talos_template_vmid }} --boot order=ide2;scsi0'
+      changed_when: false
       when: not (finalize_template | bool)
 
     - name: Start installer VM for Talos install
@@ -132,21 +136,25 @@
     - name: Ensure boot order points to disk
       ansible.builtin.command:
         cmd: "qm set {{ talos_template_vmid }} --boot order=scsi0"
+      changed_when: false
       when: finalize_template | bool
 
     - name: Detach installer ISO
       ansible.builtin.command:
         cmd: "qm set {{ talos_template_vmid }} --ide2 none,media=cdrom"
+      changed_when: false
       when: finalize_template | bool
 
     - name: Ensure final template name
       ansible.builtin.command:
         cmd: "qm set {{ talos_template_vmid }} --name {{ talos_template_name }}"
+      changed_when: false
       when: finalize_template | bool
 
     - name: Remove autoinstall kernel args
       ansible.builtin.command:
         cmd: "qm set {{ talos_template_vmid }} --delete args"
+      changed_when: false
       when: finalize_template and talos_autoinstall | bool
 
     - name: Convert VM to template
