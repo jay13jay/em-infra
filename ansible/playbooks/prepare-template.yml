@@ -1,148 +1,160 @@
 ---
-- name: Prepare VM template for Proxmox (ensure DHCP + cloud-init + qemu-guest-agent)
-  hosts: all
-  become: true
-  gather_facts: true
-  vars:
-    netplan_path: /etc/netplan/01-dhcp.yaml
-
-  tasks:
-    - name: Update apt cache (Debian/Ubuntu)
-      ansible.builtin.apt:
-        update_cache: yes
-      when: ansible_facts['os_family'] == 'Debian'
-
-    - name: Install required packages (cloud-init, qemu-guest-agent, netplan)
-      ansible.builtin.package:
-        name:
-          - cloud-init
-          - qemu-guest-agent
-          - netplan.io
-        state: present
-      when: ansible_facts['os_family'] == 'Debian'
-
-    - name: Ensure qemu-guest-agent enabled and running
-      ansible.builtin.systemd:
-        name: qemu-guest-agent
-        enabled: true
-        state: started
-      ignore_errors: true
-
-    - name: Ensure cloud-init service enabled and running
-      ansible.builtin.systemd:
-        name: cloud-init
-        enabled: true
-        state: started
-      ignore_errors: true
-
-    - name: Write a conservative netplan file that matches Ethernet interfaces and enables DHCP
-      ansible.builtin.copy:
-        dest: "{{ netplan_path }}"
-        owner: root
-        group: root
-        mode: '0644'
-        content: |
-          network:
-            version: 2
-            renderer: networkd
-            ethernets:
-              dhcp_match:
-                match:
-                  name: e*
-                dhcp4: true
-
-    - name: Run netplan apply (if present)
-      ansible.builtin.command:
-        cmd: netplan apply
-      register: netplan_apply
-      changed_when: false
-      failed_when: false
-
-    - name: Determine candidate primary interface
-      ansible.builtin.set_fact:
-        primary_iface: >-
-          {{ (ansible_facts.interfaces | default([]) | reject('equalto','lo') | list)[0] | default('eth0') }}
-
-    - name: Force a DHCP request on primary interface
-      ansible.builtin.command:
-        cmd: dhclient -v {{ primary_iface }}
-      register: dhclient_out
-      ignore_errors: true
-
-    - name: Wait for an IPv4 address on primary interface
-      ansible.builtin.wait_for:
-        timeout: 120
-        host: "{{ inventory_hostname }}"
-        port: 22
-      when: inventory_hostname is search('\d+\.\d+\.\d+\.\d+')
-
-    - name: Show assigned IPv4 address (debug)
-      ansible.builtin.command:
-        cmd: ip -4 -o addr show {{ primary_iface }}
-      register: ip_out
-      failed_when: false
-
-    - name: Print IP discovery result
-      ansible.builtin.debug:
-        msg: "Interface {{ primary_iface }}: {{ ip_out.stdout | default('no-ip-detected') }}"
-
-    - name: Check qemu-guest-agent version (optional)
-      ansible.builtin.command:
-        cmd: qemu-ga --version
-      register: qga_ver
-      failed_when: false
-      changed_when: false
-
-    - name: Debug qemu-guest-agent
-      ansible.builtin.debug:
-        msg: "qemu-guest-agent: {{ qga_ver.stdout | default('not-found') }}"
-
-- name: Re-template VM on Proxmox (optional)
-  hosts: localhost
+- name: Prepare Talos base template on Proxmox
+  hosts: proxmox
   gather_facts: false
   vars:
-    retemplate: "{{ retemplate | default(false) }}"
-    proxmox_host: "{{ proxmox_host | default('') }}"
-    proxmox_user: "{{ proxmox_user | default('root@pam') }}"
-    vmid: "{{ vmid | default('') }}"
-    retemplate_timeout: "{{ retemplate_timeout | default(300) }}"
+    talos_version: "1.12.4"
+    talos_template_name: "talos-v{{ talos_version }}-base"
+    talos_template_vmid: 9000
+    talos_template_storage: "tank"
+    talos_iso_storage: "local"
+    talos_iso_filename: "talos-v{{ talos_version }}-metal-amd64.iso"
+    talos_iso_volume: "{{ talos_iso_storage }}:iso/{{ talos_iso_filename }}"
+    template_cores: 2
+    template_memory_mb: 4096
+    template_disk_gb: 20
+    template_bridge: "vmbr0"
+    talos_autoinstall: false
+    talos_autoinstall_config_url: ""
+    talos_install_disk: "/dev/sda"
+    talos_autoinstall_hostname: "{{ talos_template_name }}"
+    finalize_template: false
+    wait_timeout_seconds: 300
 
   tasks:
-    - name: Skip retemplating when disabled
-      ansible.builtin.debug:
-        msg: "Retemplate disabled; set -e retemplate=true proxmox_host=... proxmox_user=... vmid=... to enable"
-      when: not retemplate
+    - name: Validate Talos template naming contract
+      ansible.builtin.assert:
+        that:
+          - talos_template_name is match('^talos-v[0-9]+\.[0-9]+\.[0-9]+-base$')
+        fail_msg: "talos_template_name must follow talos-v<major>.<minor>.<patch>-base (example: talos-v1.12.4-base)."
 
-    - name: Shutdown VM on Proxmox via SSH
-      ansible.builtin.shell: |
-        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {{ proxmox_user }}@{{ proxmox_host }} "qm shutdown {{ vmid }}"
-      register: shutdown_cmd
+    - name: Check that Talos ISO exists in Proxmox storage
+      ansible.builtin.command:
+        cmd: "pvesm path {{ talos_iso_volume }}"
+      register: talos_iso_path
+      changed_when: false
+
+    - name: Check whether template VMID already exists
+      ansible.builtin.command:
+        cmd: "qm status {{ talos_template_vmid }}"
+      register: vm_status
       failed_when: false
-      when: retemplate
+      changed_when: false
 
-    - name: Poll for VM stopped state via Proxmox (qm status)
-      ansible.builtin.shell: |
-        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {{ proxmox_user }}@{{ proxmox_host }} "qm status {{ vmid }} || true"
-      register: status_cmd
-      until: "status_cmd.stdout is search('status: stopped')"
-      retries: "{{ (retemplate_timeout | int) // 5 }}"
+    - name: Create Talos installer VM when absent
+      ansible.builtin.command:
+        cmd: >-
+          qm create {{ talos_template_vmid }}
+          --name {{ talos_template_name }}
+          --memory {{ template_memory_mb }}
+          --cores {{ template_cores }}
+          --cpu host
+          --net0 virtio,bridge={{ template_bridge }}
+          --ostype l26
+          --scsihw virtio-scsi-pci
+      when: vm_status.rc != 0
+
+    - name: Configure template disk
+      ansible.builtin.command:
+        cmd: "qm set {{ talos_template_vmid }} --scsi0 {{ talos_template_storage }}:{{ template_disk_gb }}"
+      when: vm_status.rc != 0
+
+    - name: Attach Talos installer ISO
+      ansible.builtin.command:
+        cmd: "qm set {{ talos_template_vmid }} --ide2 {{ talos_iso_volume }},media=cdrom"
+
+    - name: Build Talos autoinstall kernel args
+      ansible.builtin.set_fact:
+        talos_kernel_args: >-
+          talos.platform=metal
+          talos.install=yes
+          talos.install.disk={{ talos_install_disk }}
+          talos.install.poweroff=true
+          talos.config={{ talos_autoinstall_config_url }}
+          talos.hostname={{ talos_autoinstall_hostname }}
+      when: talos_autoinstall | bool
+
+    - name: Assert autoinstall config URL is provided when enabled
+      ansible.builtin.assert:
+        that:
+          - talos_autoinstall_config_url | length > 0
+        fail_msg: "talos_autoinstall is true but talos_autoinstall_config_url is empty. Provide a Talos machine config URL."
+      when: talos_autoinstall | bool
+
+    - name: Apply autoinstall kernel args
+      ansible.builtin.command:
+        cmd: >-
+          qm set {{ talos_template_vmid }}
+          --args "-append \"{{ talos_kernel_args }}\""
+      when: talos_autoinstall | bool
+
+    - name: Configure boot order for install stage
+      ansible.builtin.command:
+        cmd: 'qm set {{ talos_template_vmid }} --boot order=ide2;scsi0'
+      when: not (finalize_template | bool)
+
+    - name: Start installer VM for Talos install
+      ansible.builtin.command:
+        cmd: "qm start {{ talos_template_vmid }}"
+      register: start_result
+      changed_when: start_result.rc == 0
+      failed_when: false
+      when: not finalize_template
+
+    - name: Install checkpoint for operator
+      ansible.builtin.debug:
+        msg:
+          - "Installer VM {{ talos_template_vmid }} is ready for Talos installation."
+          - "Open Proxmox console and install Talos from ISO to disk."
+          - "After install completes and VM is powered off, re-run this playbook with -e finalize_template=true."
+      when: not finalize_template
+
+    - name: End play after install stage
+      ansible.builtin.meta: end_play
+      when: not finalize_template
+
+    - name: Request graceful shutdown before template conversion
+      ansible.builtin.command:
+        cmd: "qm shutdown {{ talos_template_vmid }}"
+      failed_when: false
+      when: finalize_template | bool
+
+    - name: Wait until VM is stopped
+      ansible.builtin.command:
+        cmd: "qm status {{ talos_template_vmid }}"
+      register: stop_status
+      changed_when: false
+      until: "'status: stopped' in stop_status.stdout"
+      retries: "{{ (wait_timeout_seconds | int) // 5 }}"
       delay: 5
-      failed_when: false
-      when: retemplate
+      when: finalize_template | bool
 
-    - name: Force stop VM if still running
-      ansible.builtin.shell: |
-        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {{ proxmox_user }}@{{ proxmox_host }} "qm stop {{ vmid }}"
-      when: "retemplate and (status_cmd.stdout is not search('status: stopped'))"
-      ignore_errors: true
+    - name: Ensure boot order points to disk
+      ansible.builtin.command:
+        cmd: "qm set {{ talos_template_vmid }} --boot order=scsi0"
+      when: finalize_template | bool
 
-    - name: Convert VM to template on Proxmox
-      ansible.builtin.shell: |
-        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {{ proxmox_user }}@{{ proxmox_host }} "qm template {{ vmid }}"
-      register: template_cmd
-      failed_when: template_cmd.rc != 0
-      when: retemplate
+    - name: Detach installer ISO
+      ansible.builtin.command:
+        cmd: "qm set {{ talos_template_vmid }} --ide2 none,media=cdrom"
+      when: finalize_template | bool
 
-    - name: Show retemplate result
+    - name: Ensure final template name
+      ansible.builtin.command:
+        cmd: "qm set {{ talos_template_vmid }} --name {{ talos_template_name }}"
+      when: finalize_template | bool
+
+    - name: Remove autoinstall kernel args
+      ansible.builtin.command:
+        cmd: "qm set {{ talos_template_vmid }} --delete args"
+      when: finalize_template and talos_autoinstall | bool
+
+    - name: Convert VM to template
+      ansible.builtin.command:
+        cmd: "qm template {{ talos_template_vmid }}"
+      when: finalize_template | bool
+
+    - name: Report completion
       ansible.builtin.debug:
-        msg: "Retemplate output: {{ template_cmd.stdout | default(template_cmd.stderr) }}"
+        msg: "Talos base template ready: vmid={{ talos_template_vmid }}, name={{ talos_template_name }}"
+      when: finalize_template | bool

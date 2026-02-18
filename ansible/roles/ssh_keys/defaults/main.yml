@@ -1,0 +1,20 @@
+---
+# Cluster-scoped SSH key lifecycle defaults.
+# This role is intended to avoid reusing long-lived personal keys for infra automation.
+
+ssh_keys_base_dir: "{{ playbook_dir }}/../.keys"
+ssh_keys_cluster_name: "{{ cluster_name | default(env_name | default('em-dev')) }}"
+
+ssh_keys_type: "ed25519"
+ssh_keys_rsa_bits: 4096
+ssh_keys_comment: "em-infra-{{ ssh_keys_cluster_name }}"
+
+ssh_keys_directory: "{{ ssh_keys_base_dir }}/{{ ssh_keys_cluster_name }}"
+ssh_keys_private_key_path: "{{ ssh_keys_directory }}/id_{{ ssh_keys_type }}"
+ssh_keys_public_key_path: "{{ ssh_keys_private_key_path }}.pub"
+
+# Set true to rotate (delete and recreate) existing cluster keypair.
+ssh_keys_force_regenerate: false
+
+ssh_keys_private_key_mode: "0600"
+ssh_keys_public_key_mode: "0644"

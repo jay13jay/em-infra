@@ -1,0 +1,84 @@
+---
+- name: Validate ssh_keys inputs
+  ansible.builtin.assert:
+    that:
+      - ssh_keys_cluster_name | trim | length > 0
+      - ssh_keys_type in ['ed25519', 'rsa']
+      - ssh_keys_private_key_path | trim | length > 0
+    fail_msg: "ssh_keys role input invalid. Ensure cluster name is set and ssh_keys_type is one of: ed25519, rsa."
+
+- name: Ensure cluster key directory exists
+  ansible.builtin.file:
+    path: "{{ ssh_keys_directory }}"
+    state: directory
+    mode: '0700'
+
+- name: Remove existing cluster keypair when rotation is requested
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ ssh_keys_private_key_path }}"
+    - "{{ ssh_keys_public_key_path }}"
+  when: ssh_keys_force_regenerate | bool
+
+- name: Check whether private key exists
+  ansible.builtin.stat:
+    path: "{{ ssh_keys_private_key_path }}"
+  register: ssh_private_key_stat
+
+- name: Generate ed25519 keypair when missing
+  ansible.builtin.command:
+    cmd: >-
+      ssh-keygen -t ed25519
+      -f {{ ssh_keys_private_key_path }}
+      -N ''
+      -C {{ ssh_keys_comment | quote }}
+  when:
+    - ssh_keys_type == 'ed25519'
+    - not ssh_private_key_stat.stat.exists
+
+- name: Generate rsa keypair when missing
+  ansible.builtin.command:
+    cmd: >-
+      ssh-keygen -t rsa -b {{ ssh_keys_rsa_bits }}
+      -f {{ ssh_keys_private_key_path }}
+      -N ''
+      -C {{ ssh_keys_comment | quote }}
+  when:
+    - ssh_keys_type == 'rsa'
+    - not ssh_private_key_stat.stat.exists
+
+- name: Re-check whether private key exists after generation step
+  ansible.builtin.stat:
+    path: "{{ ssh_keys_private_key_path }}"
+  register: ssh_private_key_stat_after
+
+- name: Check whether public key exists after generation step
+  ansible.builtin.stat:
+    path: "{{ ssh_keys_public_key_path }}"
+  register: ssh_public_key_stat_after
+
+- name: Ensure private key mode
+  ansible.builtin.file:
+    path: "{{ ssh_keys_private_key_path }}"
+    mode: "{{ ssh_keys_private_key_mode }}"
+  when: ssh_private_key_stat_after.stat.exists
+
+- name: Ensure public key mode
+  ansible.builtin.file:
+    path: "{{ ssh_keys_public_key_path }}"
+    mode: "{{ ssh_keys_public_key_mode }}"
+  when: ssh_public_key_stat_after.stat.exists
+
+- name: Read generated public key
+  ansible.builtin.slurp:
+    src: "{{ ssh_keys_public_key_path }}"
+  register: ssh_public_key_slurp
+  when: ssh_public_key_stat_after.stat.exists
+
+- name: Export cluster SSH key facts
+  ansible.builtin.set_fact:
+    ssh_cluster_private_key_path: "{{ ssh_keys_private_key_path }}"
+    ssh_cluster_public_key_path: "{{ ssh_keys_public_key_path }}"
+    ssh_cluster_public_key: "{{ (ssh_public_key_slurp.content | b64decode | trim) if ssh_public_key_stat_after.stat.exists else '' }}"

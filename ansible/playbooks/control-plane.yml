@@ -1,41 +1,41 @@
 ---
-name: k3s control plane
-hosts: k3s_control
-become: true
-vars:
-  disable_flag: "--disable=traefik"
-tasks:
-  - name: Ensure apt cache is up to date
-    apt:
-      update_cache: yes
-      cache_valid_time: 3600
+- name: k3s control plane
+  hosts: k3s_control
+  become: true
+  vars:
+    disable_flag: "--disable=traefik"
+  tasks:
+    - name: Ensure apt cache is up to date
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
 
-  - name: Install prerequisites
-    apt:
-      name: [curl]
-      state: present
+    - name: Install prerequisites
+      apt:
+        name: [curl]
+        state: present
 
-  - name: Check for existing k3s binary
-    stat:
-      path: /usr/local/bin/k3s
-    register: k3s_bin
+    - name: Check for existing k3s binary
+      stat:
+        path: /usr/local/bin/k3s
+      register: k3s_bin
 
-  - name: Install k3s server (idempotent)
-    shell: |
-      {{ ('INSTALL_K3S_VERSION=' + k3s_version) if k3s_version | default('') else '' }} INSTALL_K3S_EXEC="{{ disable_flag if k3s_disable_traefik | default(true) else '' }}" sh -s - server
-    args:
-      executable: /bin/bash
-    when: not k3s_bin.stat.exists
+    - name: Install k3s server (idempotent)
+      shell: |
+        {{ ('INSTALL_K3S_VERSION=' + k3s_version) if k3s_version | default('') else '' }} INSTALL_K3S_EXEC="{{ disable_flag if k3s_disable_traefik | default(true) else '' }}" sh -s - server
+      args:
+        executable: /bin/bash
+      when: not k3s_bin.stat.exists
 
-  - name: Ensure k3s service is enabled and running
-    systemd:
-      name: k3s
-      state: started
-      enabled: yes
+    - name: Ensure k3s service is enabled and running
+      systemd:
+        name: k3s
+        state: started
+        enabled: yes
 
-  - name: Ensure kubeconfig is readable by the SSH user
-    file:
-      path: /etc/rancher/k3s/k3s.yaml
-      owner: root
-      group: root
-      mode: '0644'
+    - name: Ensure kubeconfig is readable by the SSH user
+      file:
+        path: /etc/rancher/k3s/k3s.yaml
+        owner: root
+        group: root
+        mode: '0644'

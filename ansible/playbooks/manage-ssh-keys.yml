@@ -1,0 +1,15 @@
+---
+- name: Generate or rotate cluster-scoped SSH keys
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - role: ssh_keys
+
+  tasks:
+    - name: Show generated key paths
+      ansible.builtin.debug:
+        msg:
+          - "Cluster keypair ready for {{ ssh_keys_cluster_name }}"
+          - "Private key: {{ ssh_cluster_private_key_path }}"
+          - "Public key: {{ ssh_cluster_public_key_path }}"

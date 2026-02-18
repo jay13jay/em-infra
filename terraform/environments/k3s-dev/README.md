@@ -12,6 +12,8 @@ Important notes:
 - This environment provisions VMs only. Terraform manages VM lifecycle and host resources; Talos is responsible for node OS configuration and runtime state (bootstrapping and in-cluster lifecycle).
 - GPU workers are created one-per-PCI BDF. To scale GPU workers add/remove entries in `gpu_worker_pci_bdfs`.
 - The `gpu_worker` module expects the GPU to be bound on the host (see `modules/gpu_worker/README.md`). Terraform will not rebind host devices.
+- Base template preparation is an Ansible pre-step. Use `ansible/playbooks/prepare-template.yml` and `ansible/README_PREPARE_TEMPLATE.md`.
+- Canonical template naming is `talos-v<major>.<minor>.<patch>-base` (example: `talos-v1.12.4-base`).
 - **Phase 2 output contract is stable** via `talos_bootstrap_contract` and related `talos_*` outputs.
 - For Talos workflows, do not treat guest-agent-derived IP fields as canonical runtime discovery.
 - Prefer static/reserved addressing and post-bootstrap discovery via `talosctl`.
