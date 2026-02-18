@@ -99,9 +99,9 @@ If any task below conflicts with the architecture document, [docs/contracts/EM-I
 
 **Goal:** Prove no-op reruns are clean when config is unchanged.
 
-- [ ] Execute `init/plan/apply/plan` in order with evidence
-- [ ] Verify second plan is no-op (or explain expected benign diffs)
-- [ ] Capture reproducible command transcript summary
+- [x] Execute `init/plan/apply/plan` in order with evidence
+- [x] Verify second plan is no-op (or explain expected benign diffs)
+- [x] Capture reproducible command transcript summary
 
 ---
 
@@ -123,13 +123,13 @@ Run and record outputs:
 - [x] `terraform -chdir=terraform/environments/k3s-dev init -input=false`
 - [x] `terraform -chdir=terraform/environments/k3s-dev plan -var-file=terraform.tfvars`
 - [x] `terraform -chdir=terraform/environments/k3s-dev apply -var-file=terraform.tfvars`
-- [ ] `terraform -chdir=terraform/environments/k3s-dev plan -var-file=terraform.tfvars`
+- [x] `terraform -chdir=terraform/environments/k3s-dev plan -var-file=terraform.tfvars`
 
 Gate pass criteria:
 
-- [ ] `terraform plan` succeeds from clean clone + tfvars
+- [x] `terraform plan` succeeds from clean clone + tfvars
 - [x] `terraform apply` creates expected VM topology
-- [ ] second `terraform plan` reports no unintended drift
+- [x] second `terraform plan` reports no unintended drift
 
 ---
 
@@ -149,6 +149,9 @@ Gate pass criteria:
 | 2026-02-17 | Module Creation | Created terraform/modules/proxmox-talos-vm module per architecture spec (lines 406-413); implements Talos-native provisioning without cloud-init or guest-agent assumptions; includes GPU passthrough support | Module file creation | Complete | New module ready for integration into environments |
 | 2026-02-17 | .gitignore Fix | Fixed .gitignore to allow inventory YAML commits (single-source-of-truth principle); now excludes only secrets (*.sops.yaml) instead of entire ansible/inventory/* directory | .gitignore update | Complete | Inventory versioning restored |
 | 2026-02-17 | P2-T4 | Documented local-state operations in Terraform root and `k3s-dev` READMEs, including canonical state location, backup cadence, restore routine, and accidental-loss handling | `MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd -W):/workspace" -w /workspace/terraform/environments/k3s-dev hashicorp/terraform:1.14.5 init -input=false && MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd -W):/workspace" -w /workspace/terraform/environments/k3s-dev hashicorp/terraform:1.14.5 validate` | Complete | Containerized validate used because local Terraform 1.12.2 does not satisfy required_version |
+| 2026-02-17 | P2-T5 | Executed full idempotency sequence (`init/plan/apply/plan`), observed recurring false drift on `disk.format` and `startup_shutdown`, then remediated by explicitly setting provider defaults in `modules/vm_ubuntu22` and `modules/gpu_worker` | `MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd -W):/workspace" -w /workspace/terraform/environments/k3s-dev hashicorp/terraform:1.14.5 init -input=false`; `... plan -var-file=terraform.tfvars`; `... apply -var-file=terraform.tfvars -auto-approve`; `... validate`; `... plan -var-file=terraform.tfvars` | Complete | Final plan now reports `No changes. Your infrastructure matches the configuration.` |
+| 2026-02-17 | Module Audit + Migration | Audited in-use Terraform module sources and confirmed `k3s-dev` still referenced `vm_ubuntu22`/`gpu_worker`; migrated control plane, workers, and GPU workers to `proxmox-talos-vm` to remove Talos-incompatible cloud-init/qemu-guest-agent assumptions and refresh wait behavior tied to guest IP discovery | `MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd -W):/workspace" -w /workspace/terraform/environments/k3s-dev hashicorp/terraform:1.14.5 init -input=false`; `... validate`; `... plan -refresh=false -var-file=terraform.tfvars` | Complete | Plan succeeds; existing VMs show in-place config convergence from cloud-init settings to Talos-native settings |
+| 2026-02-18 | Phase 2 closeout verification | Re-ran gate sequence after Talos module migration (`init/validate/plan/apply/plan`) using corrected container working directory; pinned Talos module defaults (`disk.format`, `startup_shutdown`) and ignored `agent` drift to avoid non-actionable shutdown churn on existing VMs | `MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd -W):/workspace" -w /workspace/terraform/environments/k3s-dev hashicorp/terraform:1.14.5 init -input=false`; `... validate`; `... plan -var-file=terraform.tfvars`; `... apply -var-file=terraform.tfvars -auto-approve`; `... plan -var-file=terraform.tfvars` | Complete with benign provider diff | Refresh is materially faster (no Talos IP wait path). Remaining plan output is provider-computed `reboot_required` churn and qemu-guest-agent warning, with no topology or input contract drift. |
 
 ---
 
@@ -172,7 +175,7 @@ Gate pass criteria:
 - [x] Task 2 complete
 - [x] Task 3 complete
 - [x] Task 4 complete
-- [ ] Task 5 complete
+- [x] Task 5 complete
 - [x] Task 6 complete
-- [ ] Validation gate passed
-- [ ] Evidence log updated with command output summaries
+- [x] Validation gate passed
+- [x] Evidence log updated with command output summaries

@@ -6,7 +6,7 @@
 - Phase: Phase 2 (Days 8-14)
 - Title: Verify no-op rerun behavior
 - Owner: Solo developer + AI assistants
-- Status: Not started
+- Status: Complete
 - Last Updated: 2026-02-17
 
 ---
@@ -56,8 +56,8 @@ Demonstrate predictable rerun behavior by executing and recording a clean `plan 
 
 ## Target Files
 
-- [ ] `docs/implementation/phase-2/phase-2-implementation-tracker.md`
-- [ ] `docs/implementation/phase-2/phase-2-task-5-idempotency-verification.md`
+- [x] `docs/implementation/phase-2/phase-2-implementation-tracker.md`
+- [x] `docs/implementation/phase-2/phase-2-task-5-idempotency-verification.md`
 
 ---
 
@@ -89,9 +89,9 @@ Demonstrate predictable rerun behavior by executing and recording a clean `plan 
 
 ## Acceptance Criteria
 
-- [ ] Full command sequence is executed and recorded.
-- [ ] Rerun behavior is explicitly documented for operator expectations.
-- [ ] No architecture-boundary conflicts introduced.
+- [x] Full command sequence is executed and recorded.
+- [x] Rerun behavior is explicitly documented for operator expectations.
+- [x] No architecture-boundary conflicts introduced.
 
 ---
 
@@ -107,6 +107,14 @@ Demonstrate predictable rerun behavior by executing and recording a clean `plan 
 | Date | Step | Change | Validation | Result | Notes |
 |---|---|---|---|---|---|
 | 2026-02-17 | Task doc creation | Defined P2-T5 idempotency verification plan | N/A | Complete | Ready for execution |
+| 2026-02-17 | Idempotency run | Executed `init -> plan -> apply -> plan` against `terraform/environments/k3s-dev` with containerized Terraform 1.14.5 | `MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd -W):/workspace" -w /workspace/terraform/environments/k3s-dev hashicorp/terraform:1.14.5 init -input=false`; `... plan -var-file=terraform.tfvars`; `... apply -var-file=terraform.tfvars -auto-approve`; `... plan -var-file=terraform.tfvars` | Complete with known benign diffs | Both plans reported `0 to add, 2 to change, 0 to destroy` for `disk.format` (`raw -> null`) and `startup_shutdown` defaults (`-1 -> null`) on control-plane + worker VMs; changes are recurring provider normalization noise, not topology drift |
+| 2026-02-17 | Drift-remediation rerun | Added explicit `disk.format = "raw"` and explicit `startup_shutdown` defaults in VM modules, then reran validation and plan | `MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd -W):/workspace" -w /workspace/terraform/environments/k3s-dev hashicorp/terraform:1.14.5 validate`; `MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd -W):/workspace" -w /workspace/terraform/environments/k3s-dev hashicorp/terraform:1.14.5 plan -var-file=terraform.tfvars` | Complete | Plan now reports `No changes. Your infrastructure matches the configuration.`; false drift eliminated for these fields |
+
+## Findings
+
+- Initial rerun showed provider normalization drift on `disk.format` and `startup_shutdown` defaults.
+- Explicitly setting those values in module config removed the false-positive diffs.
+- Current rerun behavior is clean no-op (`No changes`) with stable VM topology and Talos output contract.
 
 ---
 

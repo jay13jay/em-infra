@@ -3,7 +3,7 @@ locals {
 }
 
 module "control_plane" {
-  source = "../../modules/vm_ubuntu22"
+  source = "../../modules/proxmox-talos-vm"
 
   name                  = "${local.name_prefix}-control-1"
   node                  = var.node
@@ -13,16 +13,11 @@ module "control_plane" {
   disk_gb               = var.control_plane_disk_gb
   disk_pool             = var.disk_pool
   network_bridge        = var.network_bridge
-  ssh_authorized_keys   = var.ssh_authorized_keys
-  cloud_init_user       = "ubuntu"
-  dhcp                  = var.dhcp
-  static_ip_config      = lookup(var.static_ip_map, "${local.name_prefix}-control-1", null)
-  wait_for_ip_timeout   = var.wait_for_ip_timeout
 }
 
 module "workers" {
   count = var.worker_count
-  source = "../../modules/vm_ubuntu22"
+  source = "../../modules/proxmox-talos-vm"
 
   name                = "${local.name_prefix}-worker-${count.index + 1}"
   node                = var.node
@@ -32,15 +27,10 @@ module "workers" {
   disk_gb             = var.worker_disk_gb
   disk_pool           = var.disk_pool
   network_bridge      = var.network_bridge
-  ssh_authorized_keys = var.ssh_authorized_keys
-  cloud_init_user     = "ubuntu"
-  dhcp                = var.dhcp
-  static_ip_config    = lookup(var.static_ip_map, "${local.name_prefix}-worker-${count.index + 1}", null)
-  wait_for_ip_timeout = var.wait_for_ip_timeout
 }
 
 module "gpu_workers" {
-  source  = "../../modules/gpu_worker"
+  source  = "../../modules/proxmox-talos-vm"
   for_each = toset(var.gpu_worker_pci_bdfs)
 
   name                = "${local.name_prefix}-gpu-${replace(each.value, ":", "-") }"
@@ -51,11 +41,5 @@ module "gpu_workers" {
   disk_gb             = var.gpu_worker_disk_gb
   disk_pool           = var.disk_pool
   network_bridge      = var.network_bridge
-  ssh_authorized_keys = var.ssh_authorized_keys
-  cloud_init_user     = "ubuntu"
-  dhcp                = var.dhcp
-  static_ip_config    = lookup(var.static_ip_map, "${local.name_prefix}-gpu-${replace(each.value, ":", "-")}", null)
-  wait_for_ip_timeout = var.wait_for_ip_timeout
-
   gpu_pci_bdf         = each.value
 }

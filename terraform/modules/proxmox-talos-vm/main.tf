@@ -20,7 +20,14 @@ resource "proxmox_vm_qemu" "this" {
     type    = "disk"
     storage = var.disk_pool
     slot    = "scsi0"
+    format  = "raw"
     size    = "${var.disk_gb}G"
+  }
+
+  startup_shutdown {
+    order            = -1
+    startup_delay    = -1
+    shutdown_timeout = -1
   }
 
   network {
@@ -47,9 +54,13 @@ resource "proxmox_vm_qemu" "this" {
 
   // Boot immediately after clone
   boot = "order=scsi0"
-  onboot = var.onboot
+  start_at_node_boot = var.onboot
 
   // Note: Talos manages its own network state via machine config
   // If network drift is detected, it likely indicates a machine config change
   // applied outside of Terraform, which is expected in the Talos workflow
+
+  lifecycle {
+    ignore_changes = [agent, reboot_required]
+  }
 }

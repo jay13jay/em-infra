@@ -1,6 +1,6 @@
 output "vmid" {
   description = "Proxmox VM ID"
-  value       = proxmox_vm_qemu.this.id
+  value       = proxmox_vm_qemu.this.vmid
 }
 
 output "vm_name" {

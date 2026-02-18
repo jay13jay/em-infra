@@ -22,7 +22,14 @@ resource "proxmox_vm_qemu" "this" {
     type    = "disk"
     storage = var.disk_pool
     slot    = "scsi${var.disk_slot}"
+    format  = "raw"
     size    = format("%dG", var.disk_gb)
+  }
+
+  startup_shutdown {
+    order            = -1
+    startup_delay    = -1
+    shutdown_timeout = -1
   }
 
   network {
